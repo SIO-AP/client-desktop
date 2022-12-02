@@ -46,13 +46,19 @@ public class ConsoleGUI extends JFrame {
 
 	private Controller monController;
 
-	private JPanel pnlStartGame;
+	private JPanel pnlGameMode;
+	private JPanel pnlSoloCreateGame;
+	private JPanel pnlMultiGame;
 	private JPanel pnlDisplayQuiz;
 	private JPanel pnlResultAnswer;
 	private JPanel pnlEndQuiz;
+	private JPanel pnlMultiCreateGame;
+	private JPanel pnlMultiJoinGame;
+
 	private JLabel lblAnswer;
 	private JLabel lblScore;
 	private JTextField textNom;
+	private JTextField textGroup;
 	private JLabel lblQuestion;
 	private JLabel lblFinalScore;
 	private ButtonGroup bgAnswer = new ButtonGroup();
@@ -61,7 +67,8 @@ public class ConsoleGUI extends JFrame {
 	private Question currentQuestion;
 	private JLabel lblErrorDisplayQuiz;
 	private JLabel lblErrorStartQuiz;
-	private JComboBox<Object> listeNbQuestion;
+	private JComboBox<Object> listeNbQuestionSolo;
+	private JComboBox<Object> listeNbQuestionMulti;
 	private JLabel lblNumQuestion;
 
 	public ConsoleGUI(Controller unController) throws ParseException, UnsupportedLookAndFeelException,
@@ -86,6 +93,176 @@ public class ConsoleGUI extends JFrame {
 		// Fixe le Layout de la racine � Absolute
 		getContentPane().setLayout(null);
 
+		pnlMultiCreateGame = new JPanel();
+		pnlMultiCreateGame.setVisible(false);
+
+		pnlMultiGame = new JPanel();
+		pnlMultiGame.setVisible(false);
+		pnlMultiGame.setBounds(10, 10, 678, 453);
+		getContentPane().add(pnlMultiGame);
+		pnlMultiGame.setLayout(null);
+
+		JButton btnCreateGameMulti = new JButton("Créer un quiz");
+		btnCreateGameMulti.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				pnlMultiGame.setVisible(false);
+				pnlMultiCreateGame.setVisible(true);
+			}
+		});
+		btnCreateGameMulti.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnCreateGameMulti.setBounds(108, 222, 154, 44);
+		pnlMultiGame.add(btnCreateGameMulti);
+
+		JButton btnJoinGameMulti = new JButton("Rejoindre un quiz");
+		btnJoinGameMulti.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnJoinGameMulti.setBounds(368, 222, 172, 44);
+		pnlMultiGame.add(btnJoinGameMulti);
+
+		JButton btnMultiReturn = new JButton("Annuler");
+		btnMultiReturn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				pnlMultiGame.setVisible(false);
+				pnlGameMode.setVisible(true);
+			}
+		});
+		btnMultiReturn.setBounds(267, 376, 103, 35);
+		pnlMultiGame.add(btnMultiReturn);
+		pnlMultiCreateGame.setBounds(10, 10, 678, 453);
+		getContentPane().add(pnlMultiCreateGame);
+		pnlMultiCreateGame.setLayout(null);
+
+		textGroup = new JTextField();
+		textGroup.setBounds(204, 157, 287, 48);
+		textGroup.setColumns(10);
+		pnlMultiCreateGame.add(textGroup);
+
+		JLabel lblGroup = new JLabel("Nom du groupe :");
+		lblGroup.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblGroup.setBounds(41, 154, 153, 48);
+		pnlMultiCreateGame.add(lblGroup);
+
+		JLabel lblNbQuestionMulti = new JLabel("Nombre de questions :");
+		lblNbQuestionMulti.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblNbQuestionMulti.setBounds(40, 273, 190, 32);
+		pnlMultiCreateGame.add(lblNbQuestionMulti);
+
+		JButton btnLancementQuizMulti = new JButton("Commencer");
+		btnLancementQuizMulti.setBounds(501, 214, 170, 48);
+		pnlMultiCreateGame.add(btnLancementQuizMulti);
+		btnLancementQuizMulti.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (verificationChampGroup()) {
+					lancementQuiz(e, true); // get if its multiplayer
+				}
+			}
+		});
+
+		// Création de la liste déroulante pour le nombre de question
+		listeNbQuestionMulti = createJComboBoxMulti();
+		listeNbQuestionMulti.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		listeNbQuestionMulti.setBounds(204, 265, 153, 48);
+		pnlMultiCreateGame.add(listeNbQuestionMulti);
+
+		// D�finit le JPanel de selection du mode de jeu
+		pnlGameMode = new JPanel();
+		pnlGameMode.setBounds(10, 10, 678, 453);
+		pnlGameMode.setLayout(null);
+		pane.add(pnlGameMode);
+
+		textNom = new JTextField();
+		textNom.setBounds(204, 215, 287, 48);
+		pnlGameMode.add(textNom);
+		textNom.setColumns(10);
+
+		JLabel lblNom = new JLabel("Nom d'utilisateur :");
+		lblNom.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblNom.setBounds(40, 212, 153, 48);
+		pnlGameMode.add(lblNom);
+
+		JButton btnSoloPlayer = new JButton("Solo");
+		btnSoloPlayer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (verificationChampNom()) {
+					pnlGameMode.setVisible(false);
+					pnlSoloCreateGame.setVisible(true);
+				}
+			}
+		});
+		btnSoloPlayer.setBounds(164, 326, 138, 34);
+		pnlGameMode.add(btnSoloPlayer);
+
+		JButton btnMultiPlayer = new JButton("Multijoueurs");
+		btnMultiPlayer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (verificationChampNom()) {
+					pnlGameMode.setVisible(false);
+					pnlMultiGame.setVisible(true);
+				}
+			}
+		});
+		btnMultiPlayer.setBounds(393, 326, 138, 34);
+		pnlGameMode.add(btnMultiPlayer);
+
+		JLabel lblTitreGameMode = new JLabel("Bienvenue dans le Quiz Game Vinci");
+		lblTitreGameMode.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblTitreGameMode.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTitreGameMode.setBounds(10, 68, 658, 34);
+		pnlGameMode.add(lblTitreGameMode);
+
+		// D�finit le JPanel du start solo
+		pnlSoloCreateGame = new JPanel();
+		pnlSoloCreateGame.setVisible(false);
+		pnlSoloCreateGame.setBounds(10, 10, 678, 453);
+		pnlSoloCreateGame.setLayout(null);
+		pane.add(pnlSoloCreateGame);
+
+		JLabel lblTitre = new JLabel("Quiz Game");
+		lblTitre.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblTitre.setBounds(278, 84, 200, 65);
+		pnlSoloCreateGame.add(lblTitre);
+
+		JButton btnLancementQuizSolo = new JButton("Commencer");
+		btnLancementQuizSolo.setBounds(501, 214, 170, 48);
+		pnlSoloCreateGame.add(btnLancementQuizSolo);
+		btnLancementQuizSolo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				lancementQuiz(e, false); // get if its multiplayer
+			}
+		});
+
+		JButton btnSoloReturn = new JButton("Annuler");
+		btnSoloReturn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				pnlSoloCreateGame.setVisible(false);
+				pnlGameMode.setVisible(true);
+			}
+		});
+		btnSoloReturn.setBounds(267, 376, 103, 35);
+		pnlSoloCreateGame.add(btnSoloReturn);
+
+		lblErrorStartQuiz = new JLabel("");
+		lblErrorStartQuiz.setHorizontalAlignment(SwingConstants.CENTER);
+		lblErrorStartQuiz.setBounds(0, 394, 678, 13);
+		pnlGameMode.add(lblErrorStartQuiz);
+		lblErrorStartQuiz.setForeground(Color.RED);
+
+		JLabel txtpnWelcomeToQuizzyquiz = new JLabel();
+		txtpnWelcomeToQuizzyquiz.setText(
+				"Welcome to the VinciQuiz,\r\nEvery right answer will give you 10 points, and you will have 5 questions..\r\nIn order to win you'll need 30 points. Good Luck ! ^^");
+		txtpnWelcomeToQuizzyquiz.setBounds(132, 309, 416, 75);
+		pnlSoloCreateGame.add(txtpnWelcomeToQuizzyquiz);
+
+		JLabel lblNbQuestionSolo = new JLabel("Nombre de questions :");
+		lblNbQuestionSolo.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblNbQuestionSolo.setBounds(40, 273, 190, 32);
+		pnlSoloCreateGame.add(lblNbQuestionSolo);
+
+		// Création de la liste déroulante pour le nombre de question
+		listeNbQuestionSolo = createJComboBoxSolo();
+		listeNbQuestionSolo.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		listeNbQuestionSolo.setBounds(204, 265, 153, 48);
+		pnlSoloCreateGame.add(listeNbQuestionSolo);
+
 		pnlResultAnswer = new JPanel();
 		pnlResultAnswer.setBounds(10, 10, 678, 453);
 		pnlResultAnswer.setLayout(null);
@@ -96,6 +273,23 @@ public class ConsoleGUI extends JFrame {
 		pnlDisplayQuiz.setBounds(10, 10, 678, 453);
 		pnlDisplayQuiz.setLayout(null);
 		pnlDisplayQuiz.setVisible(false);
+
+		pnlEndQuiz = new JPanel();
+		pnlEndQuiz.setBounds(10, 10, 678, 453);
+		pnlEndQuiz.setLayout(null);
+		pnlEndQuiz.setVisible(false);
+		getContentPane().add(pnlEndQuiz);
+
+		JLabel lblEndQuiz = new JLabel("Fin du Quiz");
+		lblEndQuiz.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblEndQuiz.setHorizontalAlignment(SwingConstants.CENTER);
+		lblEndQuiz.setBounds(10, 59, 658, 26);
+		pnlEndQuiz.add(lblEndQuiz);
+
+		lblFinalScore = new JLabel("");
+		lblFinalScore.setHorizontalAlignment(SwingConstants.CENTER);
+		lblFinalScore.setBounds(10, 163, 658, 32);
+		pnlEndQuiz.add(lblFinalScore);
 		pane.add(pnlDisplayQuiz);
 		pnlDisplayQuiz.setLayout(null);
 
@@ -103,7 +297,6 @@ public class ConsoleGUI extends JFrame {
 		pnlInformationDisplayQuiz.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		pnlInformationDisplayQuiz.setBounds(37, 350, 178, 57);
 		pnlDisplayQuiz.add(pnlInformationDisplayQuiz);
-		getContentPane().add(pnlResultAnswer);
 		pnlInformationDisplayQuiz.setLayout(null);
 
 		lblQuestion = new JLabel("");
@@ -160,6 +353,7 @@ public class ConsoleGUI extends JFrame {
 		lblErrorDisplayQuiz.setForeground(Color.RED);
 		lblErrorDisplayQuiz.setBounds(183, 394, 249, 13);
 		pnlDisplayQuiz.add(lblErrorDisplayQuiz);
+		getContentPane().add(pnlResultAnswer);
 
 		JButton btnNextQuestion = new JButton("Question suivante");
 		btnNextQuestion.setBounds(276, 286, 148, 21);
@@ -179,116 +373,68 @@ public class ConsoleGUI extends JFrame {
 		lblAnswer.setBounds(209, 164, 287, 24);
 		pnlResultAnswer.add(lblAnswer);
 
-		// D�finit le JPanel du start
-		pnlStartGame = new JPanel();
-		pnlStartGame.setBounds(10, 10, 678, 453);
-		pnlStartGame.setLayout(null);
-		pane.add(pnlStartGame);
-
-		textNom = new JTextField();
-		textNom.setBounds(204, 215, 287, 48);
-		pnlStartGame.add(textNom);
-		textNom.setColumns(10);
-
-		JLabel lblTitre = new JLabel("Quiz Game");
-		lblTitre.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		lblTitre.setBounds(278, 84, 200, 65);
-		pnlStartGame.add(lblTitre);
-
-		JLabel lblNom = new JLabel("Nom d'utilisateur :");
-		lblNom.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblNom.setBounds(40, 212, 153, 48);
-		pnlStartGame.add(lblNom);
-
-		JButton btnLancementQuiz = new JButton("Commencer");
-		btnLancementQuiz.setBounds(501, 214, 170, 48);
-		pnlStartGame.add(btnLancementQuiz);
-		btnLancementQuiz.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				lancementQuiz(e, false); // get if its multiplayer
-			}
-		});
-		/*
-		JButton btnLancementMulti = new JButton("Multi joueur");
-		btnLancementMulti.setBounds(501, 150, 170, 48);
-		pnlStartGame.add(btnLancementMulti);
-		btnLancementMulti.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ClientWebsocket client = new ClientWebsocket(); // get if its multiplayer
-				Party leGroupe = new Party(0, "test", 1, null, null);
-				client.createParty(leGroupe);
-			}
-		});*/
-
-		lblErrorStartQuiz = new JLabel("");
-		lblErrorStartQuiz.setBounds(183, 394, 249, 13);
-		pnlStartGame.add(lblErrorStartQuiz);
-		lblErrorStartQuiz.setForeground(Color.RED);
-
-		JLabel txtpnWelcomeToQuizzyquiz = new JLabel();
-		txtpnWelcomeToQuizzyquiz.setText(
-				"Welcome to the VinciQuiz,\r\nEvery right answer will give you 10 points, and you will have 5 questions..\r\nIn order to win you'll need 30 points. Good Luck ! ^^");
-		txtpnWelcomeToQuizzyquiz.setBounds(132, 309, 416, 75);
-		pnlStartGame.add(txtpnWelcomeToQuizzyquiz);
-
-		JLabel lblNbQuestion = new JLabel("Nombre de questions :");
-		lblNbQuestion.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblNbQuestion.setBounds(40, 273, 190, 32);
-		pnlStartGame.add(lblNbQuestion);
-
-		// Création de la liste déroulante pour le nombre de question
-		listeNbQuestion = createJComboBox();
-		listeNbQuestion.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		listeNbQuestion.setBounds(204, 265, 153, 48);
-		pnlStartGame.add(listeNbQuestion);
-
-		pnlEndQuiz = new JPanel();
-		pnlEndQuiz.setBounds(10, 10, 678, 453);
-		pnlEndQuiz.setLayout(null);
-		pnlEndQuiz.setVisible(false);
-		getContentPane().add(pnlEndQuiz);
-
-		JLabel lblEndQuiz = new JLabel("Fin du Quiz");
-		lblEndQuiz.setHorizontalAlignment(SwingConstants.CENTER);
-		lblEndQuiz.setBounds(10, 59, 658, 26);
-		pnlEndQuiz.add(lblEndQuiz);
-
-		lblFinalScore = new JLabel("");
-		lblFinalScore.setHorizontalAlignment(SwingConstants.CENTER);
-		lblFinalScore.setBounds(10, 163, 658, 32);
-		pnlEndQuiz.add(lblFinalScore);
+		pnlMultiJoinGame = new JPanel();
+		pnlMultiJoinGame.setVisible(false);
+		pnlMultiJoinGame.setBounds(10, 10, 678, 453);
+		getContentPane().add(pnlMultiJoinGame);
+		pnlMultiJoinGame.setLayout(null);
 
 	}
 
-	private JComboBox<Object> createJComboBox()
+	private JComboBox<Object> createJComboBoxSolo()
 			throws FileNotFoundException, ClassNotFoundException, IOException, SQLException {
-		listeNbQuestion = new JComboBox<>();
+		listeNbQuestionSolo = new JComboBox<>();
 
 		int nombreTotalQuestion = monController.getLaBase().nombreTotalQuestion();
 		nombreTotalQuestion = (int) (Math.floor(nombreTotalQuestion / 5));
 
 		for (int i = 1; i < nombreTotalQuestion + 1; i++) {
-			listeNbQuestion.addItem(i * 5);
+			listeNbQuestionSolo.addItem(i * 5);
 		}
 
-		return listeNbQuestion;
+		return listeNbQuestionSolo;
 
 	}
-	
-	private boolean verificationChamp() {
-		if (textNom.getText() == null) {
+
+	private JComboBox<Object> createJComboBoxMulti()
+			throws FileNotFoundException, ClassNotFoundException, IOException, SQLException {
+		listeNbQuestionMulti = new JComboBox<>();
+
+		int nombreTotalQuestion = monController.getLaBase().nombreTotalQuestion();
+		nombreTotalQuestion = (int) (Math.floor(nombreTotalQuestion / 5));
+
+		for (int i = 1; i < nombreTotalQuestion + 1; i++) {
+			listeNbQuestionMulti.addItem(i * 5);
+		}
+
+		return listeNbQuestionMulti;
+
+	}
+
+	private boolean verificationChampNom() {
+		if (textNom.getText().isEmpty()) {
 			lblErrorStartQuiz.setText("Veuillez écrire votre prénom !");
 			return false;
-		} return true;
+		}
+		return true;
+	}
+
+	private boolean verificationChampGroup() {
+		if (textGroup.getText().isEmpty()) {
+			// lblErrorStartQuiz.setText("Veuillez écrire votre prénom !");
+			return false;
+		}
+		return true;
 	}
 
 	private void setVisible() {
-		System.out.println("Start game : \nNom : " + textNom.getText() + "\nNombre de question : "+ listeNbQuestion.getSelectedItem());
+		System.out.println("Start game : \nNom : " + textNom.getText() + "\nNombre de question : "
+				+ listeNbQuestionSolo.getSelectedItem());
 		lblErrorStartQuiz.setText("");
-		pnlStartGame.setVisible(false);
+		pnlSoloCreateGame.setVisible(false);
 		pnlDisplayQuiz.setVisible(true);
 	}
-	
+
 	private void startSoloMode(Player player) {
 		try {
 			ArrayList<Question> quizQuestions;
@@ -303,33 +449,54 @@ public class ConsoleGUI extends JFrame {
 			}
 
 			lblScore.setText("Score : " + String.valueOf(monController.getLaGame().getMyPlayer().getMyScore()));
-			lblNumQuestion.setText("Question " + String.valueOf(numCurrentQuestion) + " sur " + String.valueOf(numberOfQuestion));
+			lblNumQuestion.setText(
+					"Question " + String.valueOf(numCurrentQuestion) + " sur " + String.valueOf(numberOfQuestion));
 
 			numCurrentQuestion++;
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
 	}
-	
-	private void lancementQuiz(ActionEvent event, Boolean multiplayer) {
-		// Vérifie si le nom est entré
-		if (verificationChamp()) {
-			setVisible();
-			numberOfQuestion = (int) listeNbQuestion.getSelectedItem();
-			numCurrentQuestion = 1;
-			
-			if(multiplayer) {
-				Player thePlayer = new Player(monController, textNom.getText(), 0 /* get player's group id */);
-				// start mutli mode
 
-			} else {
-				Player thePlayer = new Player(monController, textNom.getText(), 0);
-				startSoloMode(thePlayer);
+	private void startMultiplayerMode(Player player) {
+		try {
+			Group theGroup = monController.getLaBase().getGroup(player.getaGroupId()); // create getGroup method
+			ArrayList<Question> quizQuestions = theGroup.getGroupQuestions();
+			monController.setLaGame(new QuizGame(monController, player, quizQuestions));
+			currentQuestion = monController.getLaGame().getQuestions().get(numCurrentQuestion - 1);
+			lblQuestion.setText(currentQuestion.getDescriptionQuestion());
+			Enumeration<AbstractButton> allButtons = bgAnswer.getElements();
+
+			for (Answer answer : currentQuestion.getAnswers()) {
+				allButtons.nextElement().setText(answer.getDescriptionAnswer());
 			}
 
-			
-		} 
-			
+			lblScore.setText("Score : " + String.valueOf(monController.getLaGame().getMyPlayer().getMyScore()));
+			lblNumQuestion.setText(
+					"Question " + String.valueOf(numCurrentQuestion) + " sur " + String.valueOf(numberOfQuestion));
+
+			numCurrentQuestion++;
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	private void lancementQuiz(ActionEvent event, Boolean multiplayer) {
+		// Vérifie si le nom est entré
+
+		setVisible();
+		numberOfQuestion = (int) listeNbQuestionSolo.getSelectedItem();
+		numCurrentQuestion = 1;
+
+		if (multiplayer) {
+			Player thePlayer = new Player(monController, textNom.getText(), 0 /* get player's group id */);
+			startMultiplayerMode(thePlayer);
+
+		} else {
+			Player thePlayer = new Player(monController, textNom.getText(), 0);
+			startSoloMode(thePlayer);
+		}
+
 	}
 
 	private Boolean isValidAnswer(int bgSelected) {
@@ -419,4 +586,5 @@ public class ConsoleGUI extends JFrame {
 
 		return resultMessageScore;
 	}
+
 }
