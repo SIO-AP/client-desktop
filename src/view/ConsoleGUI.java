@@ -16,7 +16,6 @@ import java.util.Enumeration;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -27,14 +26,16 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.BevelBorder;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import controller.Controller;
+import data.ClientWebsocket;
 import model.Answer;
 import model.Player;
 import model.Question;
 import model.QuizGame;
-import javax.swing.border.BevelBorder;
+import model.Group;
 
 public class ConsoleGUI extends JFrame {
 
@@ -202,7 +203,20 @@ public class ConsoleGUI extends JFrame {
 		JButton btnLancementQuiz = new JButton("Commencer");
 		btnLancementQuiz.setBounds(501, 214, 170, 48);
 		pnlStartGame.add(btnLancementQuiz);
-		btnLancementQuiz.addActionListener(this::lancementQuiz);
+		btnLancementQuiz.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				lancementQuiz(e, false); // get if its multiplayer
+			}
+		});
+		
+		JButton btnLancementMulti = new JButton("Multi joueur");
+		btnLancementMulti.setBounds(501, 150, 170, 48);
+		pnlStartGame.add(btnLancementMulti);
+		btnLancementMulti.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ClientWebsocket client = new ClientWebsocket(); // get if its multiplayer
+			}
+		});
 
 		lblErrorStartQuiz = new JLabel("");
 		lblErrorStartQuiz.setBounds(183, 394, 249, 13);
@@ -258,46 +272,84 @@ public class ConsoleGUI extends JFrame {
 		return listeNbQuestion;
 
 	}
-
-	private void lancementQuiz(ActionEvent event) {
-		// Vérifie si le nom est entré
-		if (textNom.getText().equals("")) {
+	
+	private boolean verificationChamp() {
+		if (textNom.getText() == null) {
 			lblErrorStartQuiz.setText("Veuillez écrire votre prénom !");
-		} else {
-			System.out.println("Start game : \nNom : " + textNom.getText() + "\nNombre de question : "
-					+ listeNbQuestion.getSelectedItem());
-			lblErrorStartQuiz.setText("");
-			pnlStartGame.setVisible(false);
-			pnlDisplayQuiz.setVisible(true);
+			return false;
+		} return true;
+	}
 
+	private void setVisible() {
+		System.out.println("Start game : \nNom : " + textNom.getText() + "\nNombre de question : "+ listeNbQuestion.getSelectedItem());
+		lblErrorStartQuiz.setText("");
+		pnlStartGame.setVisible(false);
+		pnlDisplayQuiz.setVisible(true);
+	}
+	
+	private void startSoloMode(Player player) {
+		try {
+			ArrayList<Question> quizQuestions;
+			quizQuestions = monController.getLaBase().getQuestions(numberOfQuestion);
+			monController.setLaGame(new QuizGame(monController, player, quizQuestions));
+			currentQuestion = monController.getLaGame().getQuestions().get(numCurrentQuestion - 1);
+			lblQuestion.setText(currentQuestion.getDescriptionQuestion());
+			Enumeration<AbstractButton> allButtons = bgAnswer.getElements();
+
+			for (Answer answer : currentQuestion.getAnswers()) {
+				allButtons.nextElement().setText(answer.getDescriptionAnswer());
+			}
+
+			lblScore.setText("Score : " + String.valueOf(monController.getLaGame().getMyPlayer().getMyScore()));
+			lblNumQuestion.setText("Question " + String.valueOf(numCurrentQuestion) + " sur " + String.valueOf(numberOfQuestion));
+
+			numCurrentQuestion++;
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	private void startMultiplayerMode(Player player) {
+		try {
+			Group theGroup = monController.getLaBase().getGroup(player.getaGroupId()); //create getGroup method
+			ArrayList<Question> quizQuestions = theGroup.getGroupQuestions();
+			monController.setLaGame(new QuizGame(monController, player, quizQuestions));
+			currentQuestion = monController.getLaGame().getQuestions().get(numCurrentQuestion - 1);
+			lblQuestion.setText(currentQuestion.getDescriptionQuestion());
+			Enumeration<AbstractButton> allButtons = bgAnswer.getElements();
+
+			for (Answer answer : currentQuestion.getAnswers()) {
+				allButtons.nextElement().setText(answer.getDescriptionAnswer());
+			}
+
+			lblScore.setText("Score : " + String.valueOf(monController.getLaGame().getMyPlayer().getMyScore()));
+			lblNumQuestion.setText("Question " + String.valueOf(numCurrentQuestion) + " sur " + String.valueOf(numberOfQuestion));
+
+			numCurrentQuestion++;
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	private void lancementQuiz(ActionEvent event, Boolean multiplayer) {
+		// Vérifie si le nom est entré
+		if (verificationChamp()) {
+			setVisible();
 			numberOfQuestion = (int) listeNbQuestion.getSelectedItem();
 			numCurrentQuestion = 1;
-			ArrayList<Question> quizQuestions;
+			
+			if(multiplayer) {
+				Player thePlayer = new Player(monController, textNom.getText(), 0 /* get player's group id */);
+				startMultiplayerMode(thePlayer);
 
-			try {
-				quizQuestions = monController.getLaBase().getQuestions(numberOfQuestion);
-				monController.setLaGame(
-						new QuizGame(monController, new Player(monController, textNom.getText(), 0), quizQuestions));
-
-				currentQuestion = monController.getLaGame().getQuestions().get(numCurrentQuestion - 1);
-
-				lblQuestion.setText(currentQuestion.getDescriptionQuestion());
-
-				Enumeration<AbstractButton> allButtons = bgAnswer.getElements();
-
-				for (Answer answer : currentQuestion.getAnswers()) {
-					allButtons.nextElement().setText(answer.getDescriptionAnswer());
-				}
-
-				lblScore.setText("Score : " + String.valueOf(monController.getLaGame().getMyPlayer().getMyScore()));
-				lblNumQuestion.setText(
-						"Question " + String.valueOf(numCurrentQuestion) + " sur " + String.valueOf(numberOfQuestion));
-
-				numCurrentQuestion++;
-			} catch (Exception e1) {
-				e1.printStackTrace();
+			} else {
+				Player thePlayer = new Player(monController, textNom.getText(), 0);
+				startSoloMode(thePlayer);
 			}
-		}
+
+			
+		} 
+			
 	}
 
 	private Boolean isValidAnswer(int bgSelected) {

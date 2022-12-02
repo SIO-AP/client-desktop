@@ -16,6 +16,8 @@ import java.util.Random;
 
 import controller.Controller;
 import model.Answer;
+import model.Group;
+import model.Player;
 import model.Question;
 
 public class MySQLAccess {
@@ -131,6 +133,24 @@ public class MySQLAccess {
 			}
 		}
 		return questions;
+	}
+	
+	public Group getGroup(int idGroup) throws SQLException {
+		try (Statement st = conn.createStatement()) {
+
+			ResultSet resultSet = st.executeQuery("select * from group where id_group = " + idGroup);
+			resultSet.next();
+
+			int aIdGroup = resultSet.getInt(1);
+			String nameGroup = resultSet.getString(2);
+			ArrayList<Player> thePlayers = (ArrayList<Player>) resultSet.getArray(3);
+			ArrayList<Question> theQuestions = (ArrayList<Question>) resultSet.getArray(4);
+
+			Group theGroup = new Group(monController, aIdGroup, nameGroup,thePlayers, theQuestions);
+			return theGroup;
+
+		}
+		
 	}
 
 	private ArrayList<Integer> listeIdQuestion(int maxQuestions)

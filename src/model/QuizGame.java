@@ -10,7 +10,6 @@ public class QuizGame {
 	
 	private Player myPlayer;
     
-    
     private ArrayList<Question> questions;
     private ArrayList<Integer> listeIdQuestions;
     
@@ -21,8 +20,8 @@ public class QuizGame {
         this.myPlayer = player;
         this.questions = questions;
     }
-    
-    public Player getMyPlayer() {
+
+	public Player getMyPlayer() {
 		return myPlayer;
 	}
     
