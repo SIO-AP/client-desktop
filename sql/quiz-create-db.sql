@@ -1,24 +1,36 @@
-#databases list on instance
-show databases;
-#quiz_db database creation
-CREATE DATABASE quiz_db;
-USE quiz_db;
-CREATE TABLE quiz_game (
-    id_game            INTEGER NOT NULL AUTO_INCREMENT,
-    player_name        VARCHAR(255),
-    player_score    INTEGER,
-    PRIMARY KEY (id_game)
+DROP TABLE if exists game_question cascade;
+DROP TABLE if exists party cascade;
+DROP TABLE if exists answer cascade;
+DROP TABLE if exists question cascade;
+DROP TABLE if exists player cascade;
+
+CREATE TABLE player (
+    id_player INTEGER NOT NULL AUTO_INCREMENT,
+    name_player VARCHAR(20),
+    score_player INTEGER,
+    PRIMARY KEY(id_player)
 );
+
+CREATE TABLE party (
+    id_party INTEGER NOT NULL AUTO_INCREMENT,
+    name_party VARCHAR(20),
+    id_player INTEGER,
+    PRIMARY KEY(id_party),
+    foreign key (id_player) references player(id_player)
+   );
+
 CREATE TABLE question(
     id_question        INTEGER,
     desc_question    VARCHAR(255),
+    difficulte INTEGER,
     PRIMARY KEY (id_question)
 );
+
 CREATE TABLE game_question (
-    id_game            INTEGER,
+    id_party            INTEGER,
     id_question        INTEGER,
-    PRIMARY KEY (id_game, id_question),
-    FOREIGN KEY (id_game) REFERENCES quiz_game(id_game),
+    PRIMARY KEY (id_party, id_question),
+    FOREIGN KEY (id_party) REFERENCES party(id_party),
     FOREIGN KEY (id_question) REFERENCES question(id_question)
 );
 CREATE TABLE answer (
@@ -27,9 +39,3 @@ CREATE TABLE answer (
     id_question        INTEGER,
     FOREIGN KEY (id_question) REFERENCES question(id_question)
 );
-#quiz_dba owner creation
-CREATE USER 'quiz_dba'@'localhost' IDENTIFIED BY 'P@ssw0rd';
-GRANT ALL PRIVILEGES ON quiz_db.* TO quiz_dba@localhost;
-FLUSH PRIVILEGES;
-#tables list on quiz_db
-show tables;

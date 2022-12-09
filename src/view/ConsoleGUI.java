@@ -98,6 +98,75 @@ public class ConsoleGUI extends JFrame {
 
 		pnlMultiGame = new JPanel();
 		pnlMultiGame.setVisible(false);
+		
+				// D�finit le JPanel de l'affichage des questions
+				pnlDisplayQuiz = new JPanel();
+				pnlDisplayQuiz.setBounds(10, 10, 678, 453);
+				pnlDisplayQuiz.setLayout(null);
+				pnlDisplayQuiz.setVisible(false);
+				pane.add(pnlDisplayQuiz);
+				pnlDisplayQuiz.setLayout(null);
+				
+						JPanel pnlInformationDisplayQuiz = new JPanel();
+						pnlInformationDisplayQuiz.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+						pnlInformationDisplayQuiz.setBounds(37, 350, 178, 57);
+						pnlDisplayQuiz.add(pnlInformationDisplayQuiz);
+						pnlInformationDisplayQuiz.setLayout(null);
+						
+								lblQuestion = new JLabel("");
+								lblQuestion.setHorizontalAlignment(SwingConstants.CENTER);
+								lblQuestion.setBounds(10, 71, 661, 37);
+								pnlDisplayQuiz.add(lblQuestion);
+								
+										lblScore = new JLabel("Score");
+										lblScore.setBounds(10, 10, 66, 13);
+										pnlInformationDisplayQuiz.add(lblScore);
+										
+												lblNumQuestion = new JLabel("Question");
+												lblNumQuestion.setBounds(10, 33, 136, 14);
+												pnlInformationDisplayQuiz.add(lblNumQuestion);
+												
+														JRadioButton rdbtn1 = new JRadioButton("");
+														rdbtn1.setActionCommand("0");
+														rdbtn1.setBounds(62, 167, 418, 21);
+														pnlDisplayQuiz.add(rdbtn1);
+														
+																JRadioButton rdbtn2 = new JRadioButton("");
+																rdbtn2.setActionCommand("1");
+																rdbtn2.setBounds(62, 209, 418, 21);
+																pnlDisplayQuiz.add(rdbtn2);
+																
+																		JRadioButton rdbtn3 = new JRadioButton("");
+																		rdbtn3.setActionCommand("2");
+																		rdbtn3.setBounds(62, 246, 418, 21);
+																		pnlDisplayQuiz.add(rdbtn3);
+																		
+																				JRadioButton rdbtn4 = new JRadioButton("");
+																				rdbtn4.setActionCommand("3");
+																				rdbtn4.setBounds(62, 292, 418, 21);
+																				pnlDisplayQuiz.add(rdbtn4);
+																				
+																						JRadioButton rdbtn5 = new JRadioButton("");
+																						rdbtn5.setActionCommand("4");
+																						rdbtn5.setBounds(153, 340, 249, 21);
+																						rdbtn5.setVisible(false);
+																						rdbtn5.setSelected(true);
+																						pnlDisplayQuiz.add(rdbtn5);
+																						bgAnswer.add(rdbtn1);
+																						bgAnswer.add(rdbtn2);
+																						bgAnswer.add(rdbtn3);
+																						bgAnswer.add(rdbtn4);
+																						bgAnswer.add(rdbtn5);
+																						
+																								JButton btnValider = new JButton("Valider");
+																								btnValider.setBounds(501, 214, 170, 48);
+																								btnValider.addActionListener(this::questionTreatment);
+																								pnlDisplayQuiz.add(btnValider);
+																								
+																										lblErrorDisplayQuiz = new JLabel("");
+																										lblErrorDisplayQuiz.setForeground(Color.RED);
+																										lblErrorDisplayQuiz.setBounds(183, 394, 249, 13);
+																										pnlDisplayQuiz.add(lblErrorDisplayQuiz);
 		pnlMultiGame.setBounds(10, 10, 678, 453);
 		getContentPane().add(pnlMultiGame);
 		pnlMultiGame.setLayout(null);
@@ -268,12 +337,6 @@ public class ConsoleGUI extends JFrame {
 		pnlResultAnswer.setLayout(null);
 		pnlResultAnswer.setVisible(false);
 
-		// D�finit le JPanel de l'affichage des questions
-		pnlDisplayQuiz = new JPanel();
-		pnlDisplayQuiz.setBounds(10, 10, 678, 453);
-		pnlDisplayQuiz.setLayout(null);
-		pnlDisplayQuiz.setVisible(false);
-
 		pnlEndQuiz = new JPanel();
 		pnlEndQuiz.setBounds(10, 10, 678, 453);
 		pnlEndQuiz.setLayout(null);
@@ -290,69 +353,6 @@ public class ConsoleGUI extends JFrame {
 		lblFinalScore.setHorizontalAlignment(SwingConstants.CENTER);
 		lblFinalScore.setBounds(10, 163, 658, 32);
 		pnlEndQuiz.add(lblFinalScore);
-		pane.add(pnlDisplayQuiz);
-		pnlDisplayQuiz.setLayout(null);
-
-		JPanel pnlInformationDisplayQuiz = new JPanel();
-		pnlInformationDisplayQuiz.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		pnlInformationDisplayQuiz.setBounds(37, 350, 178, 57);
-		pnlDisplayQuiz.add(pnlInformationDisplayQuiz);
-		pnlInformationDisplayQuiz.setLayout(null);
-
-		lblQuestion = new JLabel("");
-		lblQuestion.setHorizontalAlignment(SwingConstants.CENTER);
-		lblQuestion.setBounds(10, 71, 661, 13);
-		pnlDisplayQuiz.add(lblQuestion);
-
-		lblScore = new JLabel("Score");
-		lblScore.setBounds(10, 10, 66, 13);
-		pnlInformationDisplayQuiz.add(lblScore);
-
-		lblNumQuestion = new JLabel("Question");
-		lblNumQuestion.setBounds(10, 33, 136, 14);
-		pnlInformationDisplayQuiz.add(lblNumQuestion);
-
-		JRadioButton rdbtn1 = new JRadioButton("");
-		rdbtn1.setActionCommand("0");
-		rdbtn1.setBounds(153, 168, 249, 21);
-		pnlDisplayQuiz.add(rdbtn1);
-
-		JRadioButton rdbtn2 = new JRadioButton("");
-		rdbtn2.setActionCommand("1");
-		rdbtn2.setBounds(153, 210, 249, 21);
-		pnlDisplayQuiz.add(rdbtn2);
-
-		JRadioButton rdbtn3 = new JRadioButton("");
-		rdbtn3.setActionCommand("2");
-		rdbtn3.setBounds(153, 247, 249, 21);
-		pnlDisplayQuiz.add(rdbtn3);
-
-		JRadioButton rdbtn4 = new JRadioButton("");
-		rdbtn4.setActionCommand("3");
-		rdbtn4.setBounds(153, 293, 249, 21);
-		pnlDisplayQuiz.add(rdbtn4);
-
-		JRadioButton rdbtn5 = new JRadioButton("");
-		rdbtn5.setActionCommand("4");
-		rdbtn5.setBounds(153, 340, 249, 21);
-		rdbtn5.setVisible(false);
-		rdbtn5.setSelected(true);
-		pnlDisplayQuiz.add(rdbtn5);
-		bgAnswer.add(rdbtn1);
-		bgAnswer.add(rdbtn2);
-		bgAnswer.add(rdbtn3);
-		bgAnswer.add(rdbtn4);
-		bgAnswer.add(rdbtn5);
-
-		JButton btnValider = new JButton("Valider");
-		btnValider.setBounds(501, 214, 170, 48);
-		btnValider.addActionListener(this::questionTreatment);
-		pnlDisplayQuiz.add(btnValider);
-
-		lblErrorDisplayQuiz = new JLabel("");
-		lblErrorDisplayQuiz.setForeground(Color.RED);
-		lblErrorDisplayQuiz.setBounds(183, 394, 249, 13);
-		pnlDisplayQuiz.add(lblErrorDisplayQuiz);
 		getContentPane().add(pnlResultAnswer);
 
 		JButton btnNextQuestion = new JButton("Question suivante");
