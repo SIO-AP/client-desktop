@@ -15,8 +15,7 @@ public class Player {
 		this.myScore = aScore;				
 	}
 	
-	public Player(Controller aController, String aName, int aScore, int groupId) {
-		this.monCtroller = aController;
+	public Player(String aName, int aScore, int groupId) {
 		this.myName = aName;
 		this.myScore = aScore;				
 		this.aGroupId = groupId;

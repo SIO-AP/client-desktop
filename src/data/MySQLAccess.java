@@ -1,6 +1,5 @@
 package data;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,8 +15,6 @@ import java.util.Random;
 
 import controller.Controller;
 import model.Answer;
-import model.Group;
-import model.Player;
 import model.Question;
 
 public class MySQLAccess {
@@ -54,26 +51,6 @@ public class MySQLAccess {
 
 		conn = DriverManager.getConnection(urlCnx, loginCnx, passwordCnx);
 	}
-
-//	private Connection readDataBase() throws FileNotFoundException, IOException, ClassNotFoundException {
-//		Properties properties = new Properties();
-//		try (FileInputStream fis = new FileInputStream("data/conf.properties")) {
-//			properties.load(fis);
-//		}
-//		Class.forName(properties.getProperty("jdbc.driver.class"));
-//
-//		urlCnx = properties.getProperty("jdbc.url");
-//		loginCnx = properties.getProperty("jdbc.login");
-//		passwordCnx = properties.getProperty("jdbc.password");
-//
-//		try {
-//			// Setup the connection with the DB
-//			connect = DriverManager.getConnection(urlCnx, loginCnx, passwordCnx);
-//			return connect;
-//		} catch (Exception e) {
-//			return null;
-//		}
-//	}
 
 	public int nombreTotalQuestion() throws FileNotFoundException, ClassNotFoundException, IOException, SQLException {
 		
@@ -133,24 +110,6 @@ public class MySQLAccess {
 			}
 		}
 		return questions;
-	}
-	
-	public Group getGroup(int idGroup) throws SQLException {
-		try (Statement st = conn.createStatement()) {
-
-			ResultSet resultSet = st.executeQuery("select * from group where id_group = " + idGroup);
-			resultSet.next();
-
-			int aIdGroup = resultSet.getInt(1);
-			String nameGroup = resultSet.getString(2);
-			ArrayList<Player> thePlayers = (ArrayList<Player>) resultSet.getArray(3);
-			ArrayList<Question> theQuestions = (ArrayList<Question>) resultSet.getArray(4);
-
-			Group theGroup = new Group(monController, aIdGroup, nameGroup,thePlayers, theQuestions);
-			return theGroup;
-
-		}
-		
 	}
 
 	private ArrayList<Integer> listeIdQuestion(int maxQuestions)
