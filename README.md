@@ -41,6 +41,9 @@ java Start</code></pre>
   <li>Add a timer to increase the challenge for advanced players</li>
 </ul>
 
+<h2>Pre-release</h2>
+You can download the pre-release jar <a href="https://github.com/SIO-AP/client-desktop/releases/tag/pre-releaseV1">here<a/>
+
 <h2>Contributing</h2>
 
 <p>If you would like to contribute to the project, please fork the repository and submit a pull request.</p>
