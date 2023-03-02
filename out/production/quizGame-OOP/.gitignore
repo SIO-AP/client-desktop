@@ -1,3 +1,5 @@
-/model/
-/view/
 /data/
+/model/
+/control/
+/view/
+/controller/

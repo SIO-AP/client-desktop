@@ -7,6 +7,7 @@ import java.text.ParseException;
 
 import javax.swing.UnsupportedLookAndFeelException;
 
+import data.ClientWebsocket;
 import data.MySQLAccess;
 import model.QuizGame;
 import view.ConsoleGUI;
@@ -24,13 +25,13 @@ public class Controller {
 	private QuizGame laGame;
 	
 	public Controller() throws ParseException, UnsupportedLookAndFeelException, FileNotFoundException, ClassNotFoundException, IOException, SQLException {
-		
 		this.laGame = null;
 		this.laBase = new MySQLAccess(this);
 		this.laBase.connection();
 		this.laConsole = new ConsoleGUI(this);
 		this.laConsole.setVisible(true);
 		this.laConsole.setLocationRelativeTo(null);
+		
 		
 	}
 	public MySQLAccess getLaBase() {
@@ -44,6 +45,12 @@ public class Controller {
 	}
 	public void setLaGame(QuizGame laGame) {
 		this.laGame = laGame;
+	}
+	public ConsoleGUI getLaConsole() {
+		return laConsole;
+	}
+	public void setLaConsole(ConsoleGUI laConsole) {
+		this.laConsole = laConsole;
 	}	
 	
 	
