@@ -4,7 +4,12 @@ USE h5ws00fg4ypyuohr;
 #insert stub data
 
 
-
+# pierre -> toto
+INSERT INTO player (name_player, password_player) VALUES("pierre","toto");
+# paul -> tutu
+INSERT INTO player (name_player, password_player) VALUES("paul","$2a$12$IG/Gbz.wqhoaFlH0VPNwrelDhobJHlUUzZbZ8B2IWD3oLZXLNDxHC");
+# jacques -> titi
+INSERT INTO player (name_player, password_player) VALUES("jacques","$2a$12$Jd40qa9wra0H1NOSXjr6l.DdkapDIYBOwjHxw8AfCf4gzxLsiVavu");
 
 INSERT INTO question VALUES(0, "Qu’est ce qu’un VPN ?", 2);
 INSERT INTO answer VALUES("Vaisseau pour neptune", false, 0);

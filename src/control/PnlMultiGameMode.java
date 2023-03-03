@@ -28,12 +28,12 @@ public class PnlMultiGameMode extends JPanel {
 			}
 		});
 		btnCreateGameMulti.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		btnCreateGameMulti.setBounds(108, 222, 154, 44);
+		btnCreateGameMulti.setBounds(130, 220, 160, 50);
 		this.add(btnCreateGameMulti);
 
 		JButton btnJoinGameMulti = new JButton("Rejoindre un quiz");
 		btnJoinGameMulti.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		btnJoinGameMulti.setBounds(368, 222, 172, 44);
+		btnJoinGameMulti.setBounds(390, 220, 160, 50);
 		this.add(btnJoinGameMulti);
 
 		JButton btnMultiReturn = new JButton("Annuler");

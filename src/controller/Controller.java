@@ -9,6 +9,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import data.ClientWebsocket;
 import data.MySQLAccess;
+import model.Player;
 import model.QuizGame;
 import view.ConsoleGUI;
 
@@ -21,6 +22,8 @@ public class Controller {
 	private ConsoleGUI laConsole;
 	//implementation
 	//default constructor
+	
+	private Player monPlayer;
 	
 	private QuizGame laGame;
 	
@@ -51,7 +54,23 @@ public class Controller {
 	}
 	public void setLaConsole(ConsoleGUI laConsole) {
 		this.laConsole = laConsole;
-	}	
+	}
+	
+	
+	public Player getMonPlayer() {
+		return monPlayer;
+	}
+	public void setMonPlayer(Player monPlayer) {
+		this.monPlayer = monPlayer;
+	}
+	public boolean verification(String name, String password) throws SQLException, ParseException {		
+		if (laBase.verifLogin(name, password)) {
+			this.monPlayer = new Player(this, name, 0);
+			return true;
+		}
+		return false;
+	}
+	
 	
 	
 	

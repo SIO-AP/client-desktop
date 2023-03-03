@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import controller.Controller;
+import model.Player;
 
 public class PnlGameMode extends JPanel {
 
@@ -19,7 +20,6 @@ public class PnlGameMode extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JTextField textNom;
 	private JLabel lblErrorStartQuiz;
 	private Controller monController;
 
@@ -30,17 +30,8 @@ public class PnlGameMode extends JPanel {
 		this.setBounds(10, 10, 678, 453);
 		this.setLayout(null);
 
-		textNom = new JTextField();
-		textNom.setBounds(204, 215, 287, 48);
-		this.add(textNom);
-		textNom.setColumns(10);
-
-		JLabel lblNom = new JLabel("Nom d'utilisateur :");
-		lblNom.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblNom.setBounds(40, 212, 153, 48);
-		this.add(lblNom);
-
-		JButton btnSoloPlayer = new JButton("Solo");
+		JButton btnSoloPlayer = new JButton("Quiz Solo");
+		btnSoloPlayer.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		btnSoloPlayer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				monController.getLaConsole().setMulti(false);
@@ -48,17 +39,18 @@ public class PnlGameMode extends JPanel {
 			}
 		});
 
-		btnSoloPlayer.setBounds(164, 326, 138, 34);
+		btnSoloPlayer.setBounds(130, 220, 160, 50);
 		this.add(btnSoloPlayer);
-
-		JButton btnMultiPlayer = new JButton("Multijoueurs");
+		
+		JButton btnMultiPlayer = new JButton("Quiz Multijoueurs");
+		btnMultiPlayer.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		btnMultiPlayer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				monController.getLaConsole().setMulti(true);
 				monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlGameMode());
 			}
 		});
-		btnMultiPlayer.setBounds(393, 326, 138, 34);
+		btnMultiPlayer.setBounds(390, 220, 160, 50);
 		this.add(btnMultiPlayer);
 
 		JLabel lblTitreGameMode = new JLabel("Bienvenue dans le Quiz Game Vinci");
@@ -73,14 +65,6 @@ public class PnlGameMode extends JPanel {
 		this.add(lblErrorStartQuiz);
 		lblErrorStartQuiz.setForeground(Color.RED);
 
-	}
-
-	public JTextField getTextNom() {
-		return textNom;
-	}
-
-	public void setTextNom(JTextField textNom) {
-		this.textNom = textNom;
 	}
 
 	public JLabel getLblErrorStartQuiz() {

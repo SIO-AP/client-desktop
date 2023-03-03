@@ -21,6 +21,7 @@ import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import control.PnlDisplayQuiz;
 import control.PnlEndQuiz;
 import control.PnlGameMode;
+import control.PnlLogin;
 import control.PnlMultiCreateGame;
 import control.PnlMultiGameMode;
 import control.PnlResultAnswer;
@@ -31,6 +32,7 @@ import model.Group;
 import model.Player;
 import model.Question;
 import model.QuizGame;
+import javax.swing.JButton;
 
 public class ConsoleGUI extends JFrame {
 
@@ -43,6 +45,7 @@ public class ConsoleGUI extends JFrame {
 
 	private Container pane;
 
+	private PnlLogin pnlLogin;
 	private PnlGameMode pnlGameMode;
 	private PnlSoloCreateGame pnlSoloCreateGame;
 	private PnlMultiGameMode pnlMultiGameMode;
@@ -80,37 +83,41 @@ public class ConsoleGUI extends JFrame {
 		// Fixe le Layout de la racine � Absolute
 		pane.setLayout(null);
 
-		// D�finit le JPanel de selection du mode de jeu
-		pnlGameMode = new PnlGameMode(monController);
-		pane.add(pnlGameMode);
+		pnlLogin = new PnlLogin(monController);
+		pane.add(pnlLogin);
 
-		pnlMultiJoinGame = new JPanel();
-		pnlMultiJoinGame.setVisible(false);
-		pnlMultiJoinGame.setBounds(10, 10, 678, 453);
-		pane.add(pnlMultiJoinGame);
-		pnlMultiJoinGame.setLayout(null);
+
+		// pnlMultiJoinGame = new JPanel();
+		// pnlMultiJoinGame.setVisible(false);
+		// pnlMultiJoinGame.setBounds(10, 10, 678, 453);
+		// pane.add(pnlMultiJoinGame);
+		// pnlMultiJoinGame.setLayout(null);
 
 	}
 
 	public void NextPanel(Object object) {
+		if (object instanceof PnlLogin) {
+			pnlLogin.setVisible(false);
+			this.remove(pnlLogin);
+			pnlLogin = null;
+
+			pnlGameMode = new PnlGameMode(monController);
+			pane.add(pnlGameMode);
+		}
+
 		if (object instanceof PnlGameMode) {
-			if (this.pnlGameMode.getTextNom().getText().isEmpty()) {
-				this.pnlGameMode.getLblErrorStartQuiz().setText("Veuillez écrire votre prénom !");
+			pnlGameMode.setVisible(false);
+			this.remove(pnlGameMode);
+			pnlGameMode = null;
+
+			if (multi) {
+				pnlMultiGameMode = new PnlMultiGameMode(monController);
+				pane.add(pnlMultiGameMode);
 			} else {
-				textNom = this.pnlGameMode.getTextNom().getText();
-
-				pnlGameMode.setVisible(false);
-				this.remove(pnlGameMode);
-				pnlGameMode = null;
-
-				if (multi) {
-					pnlMultiGameMode = new PnlMultiGameMode(monController);
-					pane.add(pnlMultiGameMode);
-				} else {
-					pnlSoloCreateGame = new PnlSoloCreateGame(monController);
-					pane.add(pnlSoloCreateGame);
-				}
+				pnlSoloCreateGame = new PnlSoloCreateGame(monController);
+				pane.add(pnlSoloCreateGame);
 			}
+
 		}
 
 		if (object instanceof PnlSoloCreateGame) {
@@ -183,9 +190,9 @@ public class ConsoleGUI extends JFrame {
 		try {
 			ArrayList<Question> quizQuestions;
 			quizQuestions = monController.getLaBase().getQuestions(numberOfQuestion);
-			monController.setLaGame(new QuizGame(monController, player, quizQuestions));
+			monController.setLaGame(new QuizGame(monController, monController.getMonPlayer(), quizQuestions));
 
-			new ClientWebsocket(monController);
+		//	new ClientWebsocket(monController);
 			currentQuestion = monController.getLaGame().getQuestions().get(numCurrentQuestion - 1);
 
 			pnlDisplayQuiz = new PnlDisplayQuiz(monController, currentQuestion);
@@ -381,4 +388,11 @@ public class ConsoleGUI extends JFrame {
 		this.pnlMultiCreateGame = pnlMultiCreateGame;
 	}
 
+	public PnlLogin getPnlLogin() {
+		return pnlLogin;
+	}
+
+	public void setPnlLogin(PnlLogin pnlLogin) {
+		this.pnlLogin = pnlLogin;
+	}
 }
