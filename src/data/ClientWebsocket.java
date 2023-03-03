@@ -20,8 +20,7 @@ public class ClientWebsocket {
 
 	public ClientWebsocket(Controller monController) {
 		Kryo kryo = client.getKryo();
-		kryo.register(SomeRequest.class);
-		kryo.register(SomeResponse.class);
+		kryo.register(SomeRequest.class);		
 		kryo.register(Message.class);
 	    kryo.register(ArrayList.class);
 	    kryo.register(QuizGame.class);
@@ -41,10 +40,10 @@ public class ClientWebsocket {
 
 		client.addListener(new Listener() {
 			public void received(Connection connection, Object object) {
-				if (object instanceof SomeResponse) {
-					SomeResponse response = (SomeResponse) object;
-					System.out.println(response.text);
-				}
+		//		if (object instanceof SomeResponse) {
+		//			SomeResponse response = (SomeResponse) object;
+			//		System.out.println(response.text);
+		//		}
 			}
 		});
 		

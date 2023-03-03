@@ -9,9 +9,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 
-import javax.swing.AbstractButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -27,12 +25,9 @@ import control.PnlMultiGameMode;
 import control.PnlResultAnswer;
 import control.PnlSoloCreateGame;
 import controller.Controller;
-import model.Answer;
-import model.Group;
 import model.Player;
 import model.Question;
 import model.QuizGame;
-import javax.swing.JButton;
 
 public class ConsoleGUI extends JFrame {
 
@@ -205,7 +200,7 @@ public class ConsoleGUI extends JFrame {
 	}
 
 	private void startMultiplayerMode(Player player) {
-		try {
+		/*try {
 			Group theGroup = monController.getLaBase().getGroup(player.getaGroupId()); // create getGroup method
 			ArrayList<Question> quizQuestions = theGroup.getGroupQuestions();
 			monController.setLaGame(new QuizGame(monController, player, quizQuestions));
@@ -225,7 +220,7 @@ public class ConsoleGUI extends JFrame {
 			numCurrentQuestion++;
 		} catch (Exception e1) {
 			e1.printStackTrace();
-		}
+		}*/
 	}
 
 	private void lancementQuiz(int nbQuestion, Boolean multiplayer) {
