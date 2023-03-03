@@ -13,7 +13,6 @@ public class Start {
     	
         //controller instantiation
     	Controller leController = new Controller();
-
     }
 }
 

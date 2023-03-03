@@ -9,6 +9,11 @@ public class Player {
 	private int myScore;
 	private int aGroupId;
 
+	public Player(String aName, int aScore) {
+		this.myName = aName;
+		this.myScore = aScore;				
+	}
+	
 	public Player(Controller aController, String aName, int aScore) {
 		this.monCtroller = aController;
 		this.myName = aName;

@@ -15,10 +15,18 @@ public class QuizGame {
     
     private Controller monController;
 
+    public QuizGame() {
+    }
+    
+    public QuizGame(Player player, ArrayList<Question> questions) {
+    	this.myPlayer = player;
+    	this.questions = questions;
+    }
+    
     public QuizGame(Controller aController, Player player, ArrayList<Question> questions) {
     	this.monController = aController;
-        this.myPlayer = player;
-        this.questions = questions;
+    	this.myPlayer = player;
+    	this.questions = questions;
     }
 
 	public Player getMyPlayer() {

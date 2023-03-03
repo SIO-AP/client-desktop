@@ -132,6 +132,31 @@ public class MySQLAccess {
 		}
 		return listeIdQuestion;
 	}
+	
+	
+	public boolean verifLogin(String name, String password) throws SQLException {
+		try (Statement st = conn.createStatement()) {
+
+			ResultSet resultSet = st.executeQuery("select * from player where name_player = '" + name + "'");
+			if (resultSet.next()) {
+				String name_db = resultSet.getString("name_player");
+				String password_db = resultSet.getString("password_player");
+				
+				if (name.compareTo(name_db)==0 && password.compareTo(password_db)==0) {
+					return true;
+				}
+				return false;
+			}
+			return false;
+		//	resultSet.next();
+			
+			
+			
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
 
 	// You need to close the resultSet
 	private void close() {
