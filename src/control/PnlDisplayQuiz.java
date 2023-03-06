@@ -107,7 +107,7 @@ public class PnlDisplayQuiz extends JPanel {
 			allButtons.nextElement().setText(answer.getDescriptionAnswer());
 		}
 
-		lblScore.setText("Score : " + String.valueOf(monController.getLaGame().getMyPlayer().getMyScore()));
+		lblScore.setText("Score : " + String.valueOf(monController.getMonPlayer().getMyScore()));
 		lblNumQuestion.setText("Question " + String.valueOf(monController.getLaConsole().getNumCurrentQuestion())
 				+ " sur " + String.valueOf(monController.getLaConsole().getNumberOfQuestion()));
 

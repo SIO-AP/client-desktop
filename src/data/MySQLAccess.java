@@ -106,7 +106,7 @@ public class MySQLAccess {
 				int idQuestion = resultSet.getInt(1);
 				String nomQuestion = resultSet.getString(2);
 
-				questions.add(new Question(nomQuestion, getAnswersFromQuestion(idQuestion)));
+				questions.add(new Question(idQuestion, nomQuestion, getAnswersFromQuestion(idQuestion)));
 			}
 		}
 		return questions;
@@ -134,26 +134,27 @@ public class MySQLAccess {
 	}
 	
 	
-	public boolean verifLogin(String name, String password) throws SQLException {
+	public int verifLogin(String name, String password) throws SQLException {
 		try (Statement st = conn.createStatement()) {
 
 			ResultSet resultSet = st.executeQuery("select * from player where name_player = '" + name + "'");
 			if (resultSet.next()) {
 				String name_db = resultSet.getString("name_player");
-				String password_db = resultSet.getString("password_player");
+				String password_db = resultSet.getString("password_player");				
 				
 				if (name.compareTo(name_db)==0 && password.compareTo(password_db)==0) {
-					return true;
+					int id_db = resultSet.getInt("id_player");
+					return id_db;
 				}
-				return false;
+				return 0;
 			}
-			return false;
+			return 0;
 		//	resultSet.next();
 			
 			
 			
 		} catch (Exception e) {
-			return false;
+			return 0;
 		}
 	}
 	

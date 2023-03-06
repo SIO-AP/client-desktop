@@ -9,7 +9,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import data.ClientWebsocket;
 import data.MySQLAccess;
+import model.Party;
 import model.Player;
+import model.Question;
 import model.QuizGame;
 import view.ConsoleGUI;
 
@@ -25,10 +27,14 @@ public class Controller {
 	
 	private Player monPlayer;
 	
-	private QuizGame laGame;
+	//private QuizGame laGame;
+	private ClientWebsocket leClient;
+	private Party laParty;
 	
 	public Controller() throws ParseException, UnsupportedLookAndFeelException, FileNotFoundException, ClassNotFoundException, IOException, SQLException {
-		this.laGame = null;
+		this.leClient = new ClientWebsocket(this);
+	//	leClient.test1();
+		
 		this.laBase = new MySQLAccess(this);
 		this.laBase.connection();
 		this.laConsole = new ConsoleGUI(this);
@@ -37,18 +43,38 @@ public class Controller {
 		
 		
 	}
+	
+	
+    public Boolean isCorrectThisAnswer(Question question, int idAnswer) {
+    	if (question.getAnswers().get(idAnswer).getIsCorrect()) {    		
+    		this.monPlayer.setMyScore(this.monPlayer.getMyScore() + 10); 
+			return true;
+    	} else {
+    		return false;
+    	}
+    }
+	
+	
+	
+	public Party getLaParty() {
+		return laParty;
+	}
+	public void setLaParty(Party laParty) {
+		this.laParty = laParty;
+	}
+
 	public MySQLAccess getLaBase() {
 		return laBase;
 	}
 	public void setLaBase(MySQLAccess laBase) {
 		this.laBase = laBase;
 	}
-	public QuizGame getLaGame() {
-		return laGame;
-	}
-	public void setLaGame(QuizGame laGame) {
-		this.laGame = laGame;
-	}
+//	public QuizGame getLaGame() {
+//		return laGame;
+//	}
+//	public void setLaGame(QuizGame laGame) {
+//		this.laGame = laGame;
+//	}
 	public ConsoleGUI getLaConsole() {
 		return laConsole;
 	}
@@ -64,11 +90,18 @@ public class Controller {
 		this.monPlayer = monPlayer;
 	}
 	public boolean verification(String name, String password) throws SQLException, ParseException {		
-		if (laBase.verifLogin(name, password)) {
-			this.monPlayer = new Player(this, name, 0);
+		int idPlayer = laBase.verifLogin(name, password);
+		if (idPlayer !=0) {
+			this.monPlayer = new Player(this, idPlayer, name, 0);
 			return true;
 		}
 		return false;
+	}
+	public ClientWebsocket getLeClient() {
+		return leClient;
+	}
+	public void setLeClient(ClientWebsocket leClient) {
+		this.leClient = leClient;
 	}
 	
 	
