@@ -17,6 +17,8 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
 import controller.Controller;
+import model.LesParty;
+import model.Party;
 
 public class PnlMultiJoinGame extends JPanel {
 
@@ -28,12 +30,23 @@ public class PnlMultiJoinGame extends JPanel {
 	private JLabel lblTimeGame2;
 	private JLabel lblIdGame2;
 
-	public PnlMultiJoinGame(Controller unController, String[][] data) {
+	public PnlMultiJoinGame(Controller unController, LesParty lesParty) {
 		monController = unController;
 		
 		this.setBounds(10, 10, 678, 453);
 		this.setLayout(null);
-		this.datas = data;
+		
+		int nbParty = lesParty.getLesParty().size();
+		this.datas = new String[nbParty][];
+
+		int i = 0;
+
+		for (Party party : lesParty.getLesParty()) {
+			String s[] = { party.getName(), Integer.toString(party.getNbQuestion()), party.getTime(),
+					Integer.toString(party.getIdParty()) };
+			datas[i] = s;
+			i++;
+		}
 
 		table = new JTable(new MyTableModel(datas));
 
@@ -61,6 +74,9 @@ public class PnlMultiJoinGame extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				if (!lblIdGame2.getText().equals("")) {
 					System.out.println(lblIdGame2.getText());
+					
+					monController.getLaConsole().setCreateGameMulti(false);
+					monController.getLeClient().joinGame(Integer.parseInt(lblIdGame2.getText()));
 				} else {
 					System.out.println("Null");
 				}
@@ -69,6 +85,16 @@ public class PnlMultiJoinGame extends JPanel {
 		btnJoinGame.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		btnJoinGame.setBounds(266, 397, 153, 46);
 		this.add(btnJoinGame);
+		
+		JButton btnJoinReturn = new JButton("Annuler");
+		btnJoinReturn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				monController.getLaConsole().PreviousPanel(monController.getLaConsole().getPnlMultiJoinGame());
+			}
+		});
+		btnJoinReturn.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		btnJoinReturn.setBounds(50, 397, 153, 46);
+		this.add(btnJoinReturn);
 
 		JLabel lblNameGame1 = new JLabel("Nom de la partie :");
 		lblNameGame1.setHorizontalAlignment(SwingConstants.RIGHT);

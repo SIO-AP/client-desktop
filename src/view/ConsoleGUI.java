@@ -27,6 +27,7 @@ import control.PnlResultAnswer;
 import control.PnlSoloCreateGame;
 import control.PnlWaitingRoom;
 import controller.Controller;
+import model.LesParty;
 import model.Party;
 import model.Question;
 
@@ -56,15 +57,20 @@ public class ConsoleGUI extends JFrame {
 	private int numberOfQuestion;
 	private int numCurrentQuestion;
 	private boolean multi;
+	private boolean createGameMulti;
 
-	public ConsoleGUI(Controller unController) throws ParseException, UnsupportedLookAndFeelException,
-			FileNotFoundException, ClassNotFoundException, IOException, SQLException {
+	public ConsoleGUI(Controller unController) {
 		// Appelle le constructeur de la classe mère
 		super();
 
 		monController = unController;
 
-		UIManager.setLookAndFeel(new NimbusLookAndFeel());
+		try {
+			UIManager.setLookAndFeel(new NimbusLookAndFeel());
+		} catch (UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		setIconImage(
 				Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("img/vinci_ico.jpg")));
@@ -129,8 +135,17 @@ public class ConsoleGUI extends JFrame {
 			pane.add(pnlWaitingRoom);
 			pnlWaitingRoom.setVisible(false);
 			pnlWaitingRoom.setVisible(true);
-
-			// lancementQuiz(nbQuestion, true);
+		}
+		
+		if (object instanceof PnlMultiJoinGame) {
+			pnlMultiJoinGame.setVisible(false);
+			this.remove(pnlMultiJoinGame);
+			pnlMultiJoinGame = null;
+			
+			pnlWaitingRoom = new PnlWaitingRoom(monController);
+			pane.add(pnlWaitingRoom);
+			pnlWaitingRoom.setVisible(false);
+			pnlWaitingRoom.setVisible(true);
 		}
 
 		if (object instanceof PnlResultAnswer) {
@@ -158,16 +173,15 @@ public class ConsoleGUI extends JFrame {
 			if (createGame) {
 				pnlMultiCreateGame = new PnlMultiCreateGame(monController);
 				pane.add(pnlMultiCreateGame);
-				
+
 			} else {
-				
-				String data[][] = { { "Partie 1", "5", "12:00:00", "1" }, { "Partie 2", "10", "12:00:00", "2" },
-						{ "Partie 3", "15", "12:00:00", "3" }, { "Partie 4", "20", "12:00:00", "4" } };
+				LesParty lesParty = monController.getLesParty();
 
-				pnlMultiJoinGame = new PnlMultiJoinGame(monController, data);
+				pnlMultiJoinGame = new PnlMultiJoinGame(monController, lesParty);
 				pane.add(pnlMultiJoinGame);
+				pnlMultiJoinGame.setVisible(false);
+				pnlMultiJoinGame.setVisible(true);
 			}
-
 		}
 
 		if (object instanceof PnlWaitingRoom) {
@@ -207,13 +221,23 @@ public class ConsoleGUI extends JFrame {
 			pnlMultiGameMode = new PnlMultiGameMode(monController);
 			pane.add(pnlMultiGameMode);
 		}
+		
+		if (object instanceof PnlMultiJoinGame) {
+			pnlMultiJoinGame.setVisible(false);
+			this.remove(pnlMultiJoinGame);
+			pnlMultiJoinGame = null;
+			
+			pnlMultiGameMode = new PnlMultiGameMode(monController);
+			pane.add(pnlMultiGameMode);
+		}
 
 	}
 
 	private void startSoloMode() {
 		try {
 			ArrayList<Question> quizQuestions;
-			quizQuestions = monController.getLaBase().getQuestions(numberOfQuestion);
+			ArrayList<Integer> listeIdQuestion = monController.listeIdQuestion(numberOfQuestion);
+			quizQuestions = monController.getLaBase().getQuestions(listeIdQuestion);
 			monController.setLaParty(new Party(0, "solo", monController.getMonPlayer().getMyId(), null, quizQuestions,
 					numberOfQuestion));
 			// monController, monController.getMonPlayer(), quizQuestions));
@@ -412,4 +436,22 @@ public class ConsoleGUI extends JFrame {
 	public void setPnlLogin(PnlLogin pnlLogin) {
 		this.pnlLogin = pnlLogin;
 	}
+
+	public PnlMultiJoinGame getPnlMultiJoinGame() {
+		return pnlMultiJoinGame;
+	}
+
+	public void setPnlMultiJoinGame(PnlMultiJoinGame pnlMultiJoinGame) {
+		this.pnlMultiJoinGame = pnlMultiJoinGame;
+	}
+
+	public boolean isCreateGameMulti() {
+		return createGameMulti;
+	}
+
+	public void setCreateGameMulti(boolean createGameMulti) {
+		this.createGameMulti = createGameMulti;
+	}
+	
+	
 }

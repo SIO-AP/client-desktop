@@ -38,7 +38,7 @@ public class PnlMultiGameMode extends JPanel {
 		btnJoinGameMulti.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				createGame = false;
-				monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlMultiGameMode());
+				monController.initLesParty();
 			}
 		});
 		btnJoinGameMulti.setBounds(390, 220, 160, 50);

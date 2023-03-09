@@ -39,9 +39,8 @@ public class ClientWebsocket {
 
 		client.start();
 		try {
-			client.connect(500000, "127.0.0.1", 54551, 54771);
+			client.connect(500000, "127.0.0.1", 54556, 54776);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -53,24 +52,35 @@ public class ClientWebsocket {
 					System.out.println("Nom : " + response.getName());
 					System.out.println("Nombre de question : " + response.getNbQuestion());
 					monController.setLaParty(response);
-					monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlMultiCreateGame());
+					if (monController.getLaConsole().isCreateGameMulti()) {
+						monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlMultiCreateGame());
+					} else {
+						System.out.println("pnl join game");
+						monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlMultiJoinGame());
+					}
 				}
 
 				if (object instanceof LesParty) {
+					System.out.println("get games");
 					LesParty lesParty = (LesParty) object;
+					monController.setLesParty(lesParty);
+					monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlMultiGameMode());
 				}
 			}
 		});
 	}
 
-	public void test() {
+	public void createGame() {
 		client.sendTCP(monController.getLaParty());
-
 	}
 
-	public void test1() {
-		
-		client.sendTCP(new LesParty());
+	public void searchGame() {
+		ArrayList<Party> lesParty = new ArrayList<Party>();
+		lesParty.add(new Party());
+		client.sendTCP(new LesParty(lesParty));
 	}
-
+	
+	public void joinGame(int idGame) {
+		client.sendTCP(new Message(1, idGame));
+	}
 }

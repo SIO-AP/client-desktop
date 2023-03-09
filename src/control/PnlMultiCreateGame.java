@@ -49,7 +49,8 @@ public class PnlMultiCreateGame extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				int nbQuestion = (int) listeNbQuestion.getSelectedItem();
 				monController.setLaParty(new Party(txtNameParty.getText(), monController.getMonPlayer().getMyId(), nbQuestion));
-				monController.getLeClient().test();
+				monController.getLaConsole().setCreateGameMulti(true);
+				monController.getLeClient().createGame();
 			}
 		});
 
