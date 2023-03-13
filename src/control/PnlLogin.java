@@ -30,7 +30,7 @@ public class PnlLogin extends JPanel {
 		this.setBounds(10, 10, 678, 453);
 
 		JLabel lblPassword = new JLabel("Password :");
-		lblPassword.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		lblPassword.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblPassword.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblPassword.setBounds(203, 190, 85, 19);
 		this.add(lblPassword);
@@ -41,11 +41,12 @@ public class PnlLogin extends JPanel {
 		passwordField.setColumns(10);
 
 		JButton btnLogin = new JButton("Login");
-		btnLogin.setBounds(209, 289, 116, 33);
+		btnLogin.setBounds(377, 289, 116, 33);
+		btnLogin.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		this.add(btnLogin);
 
 		JLabel lblName = new JLabel("Name :");
-		lblName.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		lblName.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblName.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblName.setBounds(203, 139, 85, 19);
 		this.add(lblName);
@@ -63,20 +64,15 @@ public class PnlLogin extends JPanel {
 		this.add(lblConnectionFasle);
 
 		JButton btnCancel = new JButton("Cancel");
-		btnCancel.setBounds(377, 289, 116, 33);
+		btnCancel.setBounds(209, 289, 116, 33);
+		btnCancel.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		this.add(btnCancel);
 
 		// Lance la vérification du mot de passe lors du clique sur le bouton de
 		// connexion
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					if (monController.verification(txtName.getText(), String.valueOf(passwordField.getPassword()))) {
-						monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlLogin());
-					}
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
+				login();
 			}
 		});
 
@@ -86,13 +82,7 @@ public class PnlLogin extends JPanel {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					try {
-						if (monController.verification(txtName.getText(), String.valueOf(passwordField.getPassword()))) {
-							monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlLogin());
-						}
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
+					login();
 				}
 			}
 		});
@@ -104,5 +94,20 @@ public class PnlLogin extends JPanel {
 			}
 		});
 
+	}
+
+	private void login() {
+		try {
+			if (monController.verification(txtName.getText(), String.valueOf(passwordField.getPassword()))) {
+				monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlLogin());
+			}
+			else {
+				lblConnectionFasle.setVisible(true);
+				passwordField.setText("");
+			//	passwordField.focus
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 	}
 }

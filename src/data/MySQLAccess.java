@@ -11,9 +11,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.Random;
 
+import controller.BCrypt;
 import controller.Controller;
+import controller.Jasypt;
 import model.Answer;
 import model.Question;
 
@@ -47,10 +48,12 @@ public class MySQLAccess {
 			e.printStackTrace();
 		}
 
-		// Crée la connexion
-		urlCnx = properties.getProperty("jdbc.url");
-		loginCnx = properties.getProperty("jdbc.login");
-		passwordCnx = properties.getProperty("jdbc.password");
+		Jasypt theDecrypter = new Jasypt();
+
+		// Initialise les paramètres de connexions
+		urlCnx = theDecrypter.decrypt(properties.getProperty("jdbc.url"));
+		loginCnx = theDecrypter.decrypt(properties.getProperty("jdbc.login"));
+		passwordCnx = theDecrypter.decrypt(properties.getProperty("jdbc.password"));
 	}
 
 	public int nombreTotalQuestion() throws FileNotFoundException, ClassNotFoundException, IOException, SQLException {
@@ -108,24 +111,22 @@ public class MySQLAccess {
 		return questions;
 	}
 
-	public int verifLogin(String name, String password) throws SQLException {
+	public int verifLogin(String name, String password) {
 		try (Connection connection = DriverManager.getConnection(urlCnx, loginCnx, passwordCnx);
 				Statement st = connection.createStatement()) {
 
 			ResultSet resultSet = st.executeQuery("select * from player where name_player = '" + name + "'");
 			if (resultSet.next()) {
-				String name_db = resultSet.getString("name_player");
 				String password_db = resultSet.getString("password_player");
 
-				if (name.compareTo(name_db) == 0 && password.compareTo(password_db) == 0) {
+				BCrypt myHash = new BCrypt();
+				if (myHash.checkpw(password, password_db)) {
 					int id_db = resultSet.getInt("id_player");
 					return id_db;
 				}
 				return 0;
 			}
 			return 0;
-			// resultSet.next();
-
 		} catch (Exception e) {
 			return 0;
 		}

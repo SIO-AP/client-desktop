@@ -32,30 +32,36 @@ public class PnlMultiJoinGame extends JPanel {
 
 	public PnlMultiJoinGame(Controller unController, LesParty lesParty) {
 		monController = unController;
-		
+
 		this.setBounds(10, 10, 678, 453);
 		this.setLayout(null);
-		
+
 		int nbParty = lesParty.getLesParty().size();
-		this.datas = new String[nbParty][];
+		if (nbParty > 0) {
+			this.datas = new String[nbParty][];
 
-		int i = 0;
+			int i = 0;
 
-		for (Party party : lesParty.getLesParty()) {
-			String s[] = { party.getName(), Integer.toString(party.getNbQuestion()), party.getTime(),
-					Integer.toString(party.getIdParty()) };
-			datas[i] = s;
-			i++;
+			for (Party party : lesParty.getLesParty()) {
+				String s[] = { party.getName(), Integer.toString(party.getNbQuestion()), party.getTime(),
+						Integer.toString(party.getIdParty()) };
+				datas[i] = s;
+				i++;
+			}
+		} else {
+			datas = new String[1][];
+			String s[] = { "", "", "", "" };
+			datas[0] = s;
 		}
 
-		table = new JTable(new MyTableModel(datas));
+		table = new JTable(new TableModelGame(datas));
 
 		table.getTableHeader().setReorderingAllowed(false);
 		JScrollPane jp = new JScrollPane(table);
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				MyTableModel model = (MyTableModel) table.getModel();
+				TableModelGame model = (TableModelGame) table.getModel();
 				int row = table.getSelectedRow();
 				ArrayList<String> value = model.getValueRow(row);
 
@@ -74,7 +80,7 @@ public class PnlMultiJoinGame extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				if (!lblIdGame2.getText().equals("")) {
 					System.out.println(lblIdGame2.getText());
-					
+
 					monController.getLaConsole().setCreateGameMulti(false);
 					monController.getLeClient().joinGame(Integer.parseInt(lblIdGame2.getText()));
 				} else {
@@ -85,7 +91,18 @@ public class PnlMultiJoinGame extends JPanel {
 		btnJoinGame.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		btnJoinGame.setBounds(266, 397, 153, 46);
 		this.add(btnJoinGame);
-		
+
+		JButton btnReloadGame = new JButton("Recharger");
+		btnReloadGame.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				monController.getLaConsole().setReloadJoinGame(true);
+				monController.initLesParty();
+			}
+		});
+		btnReloadGame.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		btnReloadGame.setBounds(466, 397, 153, 46);
+		this.add(btnReloadGame);
+
 		JButton btnJoinReturn = new JButton("Annuler");
 		btnJoinReturn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -146,14 +163,14 @@ public class PnlMultiJoinGame extends JPanel {
 
 	}
 
-	class MyTableModel implements TableModel {
+	private class TableModelGame implements TableModel {
 
 		private Object[][] datas;
 
 		private String[] s = { "Nom de la partie", "Nombre de question", "Heure de début de la partie",
 				"Identifiant de la partie" };
 
-		public MyTableModel(String[][] data) {
+		public TableModelGame(String[][] data) {
 			this.datas = data;
 		}
 

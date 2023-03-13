@@ -15,5 +15,6 @@
 	<classpathentry kind="lib" path="lib/kryonet-2.22.0-RC1.jar"/>
 	<classpathentry kind="lib" path="lib/minlog-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/objenesis-2.1.jar"/>
+	<classpathentry kind="lib" path="lib/jasypt-1.9.3.jar"/>
 	<classpathentry kind="output" path="out/production/quizGame-OOP"/>
 </classpath>

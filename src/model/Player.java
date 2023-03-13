@@ -4,7 +4,6 @@ import controller.Controller;
 
 public class Player {
 
-	private Controller monCtroller;
 	private int myId;
 	private String myName;
 	private int myScore;
@@ -18,20 +17,12 @@ public class Player {
 		this.myScore = aScore;
 	}
 
-	public Player(Controller aController, int aId, String aName, int aScore) {
-		this.monCtroller = aController;
+	public Player(int aId, String aName, int aScore) {
 		this.myId = aId;
 		this.myName = aName;
 		this.myScore = aScore;
 	}
 
-	public Controller getMonCtroller() {
-		return monCtroller;
-	}
-
-	public void setMonCtroller(Controller monCtroller) {
-		this.monCtroller = monCtroller;
-	}
 
 	public String getMyName() {
 		return myName;
