@@ -4,13 +4,11 @@ package view;
 import java.awt.Container;
 import java.awt.Font;
 import java.awt.Toolkit;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -22,12 +20,17 @@ import control.PnlGameMode;
 import control.PnlLogin;
 import control.PnlMultiCreateGame;
 import control.PnlMultiGameMode;
+import control.PnlMultiJoinGame;
 import control.PnlResultAnswer;
 import control.PnlSoloCreateGame;
+import control.PnlWaitingRoom;
 import controller.Controller;
-import model.Player;
+import data.ClientWebsocket;
+import model.LesParty;
+import model.Party;
 import model.Question;
-import model.QuizGame;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 public class ConsoleGUI extends JFrame {
 
@@ -48,22 +51,30 @@ public class ConsoleGUI extends JFrame {
 	private PnlResultAnswer pnlResultAnswer;
 	private PnlEndQuiz pnlEndQuiz;
 	private PnlMultiCreateGame pnlMultiCreateGame;
-	private JPanel pnlMultiJoinGame;
+	private PnlWaitingRoom pnlWaitingRoom;
+	private PnlMultiJoinGame pnlMultiJoinGame;
 
-	private String textNom;
 	private Question currentQuestion;
 	private int numberOfQuestion;
 	private int numCurrentQuestion;
 	private boolean multi;
+	private boolean createGameMulti;
+	private boolean reloadJoinGame = false;
+	private boolean waitingScreen = false;
+	private boolean blPnlResultAnswer = false;
 
-	public ConsoleGUI(Controller unController) throws ParseException, UnsupportedLookAndFeelException,
-			FileNotFoundException, ClassNotFoundException, IOException, SQLException {
+	public ConsoleGUI(Controller unController) {
 		// Appelle le constructeur de la classe mère
 		super();
 
 		monController = unController;
 
-		UIManager.setLookAndFeel(new NimbusLookAndFeel());
+		// try {
+		// UIManager.setLookAndFeel(new NimbusLookAndFeel());
+		// } catch (UnsupportedLookAndFeelException e) {
+		// TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 
 		setIconImage(
 				Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("img/vinci_ico.jpg")));
@@ -80,13 +91,6 @@ public class ConsoleGUI extends JFrame {
 
 		pnlLogin = new PnlLogin(monController);
 		pane.add(pnlLogin);
-
-
-		// pnlMultiJoinGame = new JPanel();
-		// pnlMultiJoinGame.setVisible(false);
-		// pnlMultiJoinGame.setBounds(10, 10, 678, 453);
-		// pane.add(pnlMultiJoinGame);
-		// pnlMultiJoinGame.setLayout(null);
 
 	}
 
@@ -106,8 +110,20 @@ public class ConsoleGUI extends JFrame {
 			pnlGameMode = null;
 
 			if (multi) {
-				pnlMultiGameMode = new PnlMultiGameMode(monController);
-				pane.add(pnlMultiGameMode);
+
+				try {
+					monController.setLeClient(new ClientWebsocket(monController));
+					pnlMultiGameMode = new PnlMultiGameMode(monController);
+					pane.add(pnlMultiGameMode);
+				} catch (IOException e) {
+					// e.printStackTrace();
+					pnlGameMode = new PnlGameMode(monController);
+					pane.add(pnlGameMode);
+					JOptionPane.showMessageDialog(this,
+							"Un problème est survenue lors de la connexion au serveur.\r\nVeuillez réessayer.",
+							"Erreur de connexion", JOptionPane.ERROR_MESSAGE);
+				}
+
 			} else {
 				pnlSoloCreateGame = new PnlSoloCreateGame(monController);
 				pane.add(pnlSoloCreateGame);
@@ -126,10 +142,50 @@ public class ConsoleGUI extends JFrame {
 			lancementQuiz(nbQuestion, false);
 		}
 
+		if (object instanceof PnlMultiCreateGame) {
+			pnlMultiCreateGame.setVisible(false);
+			this.remove(pnlMultiCreateGame);
+			pnlMultiCreateGame = null;
+
+			pnlWaitingRoom = new PnlWaitingRoom(monController);
+			pane.add(pnlWaitingRoom);
+			pnlWaitingRoom.setVisible(false);
+			pnlWaitingRoom.setVisible(true);
+
+			waitingScreen = true;
+		}
+
+		if (object instanceof PnlMultiJoinGame) {
+			pnlMultiJoinGame.setVisible(false);
+			this.remove(pnlMultiJoinGame);
+			pnlMultiJoinGame = null;
+
+			if (reloadJoinGame) {
+
+				LesParty lesParty = monController.getLesParty();
+
+				pnlMultiJoinGame = new PnlMultiJoinGame(monController, lesParty);
+				pane.add(pnlMultiJoinGame);
+				pnlMultiJoinGame.setVisible(false);
+				pnlMultiJoinGame.setVisible(true);
+
+				reloadJoinGame = false;
+			} else {
+				pnlWaitingRoom = new PnlWaitingRoom(monController);
+				pane.add(pnlWaitingRoom);
+				pnlWaitingRoom.setVisible(false);
+				pnlWaitingRoom.setVisible(true);
+
+				waitingScreen = true;
+			}
+		}
+
 		if (object instanceof PnlResultAnswer) {
 			pnlResultAnswer.setVisible(false);
 			pane.remove(pnlResultAnswer);
 			pnlResultAnswer = null;
+			
+			blPnlResultAnswer = false;
 
 			if (numCurrentQuestion <= numberOfQuestion) {
 				// Question suivante
@@ -142,12 +198,30 @@ public class ConsoleGUI extends JFrame {
 		}
 
 		if (object instanceof PnlMultiGameMode) {
+			Boolean createGame = pnlMultiGameMode.getCreateGame();
+
 			pnlMultiGameMode.setVisible(false);
 			pane.remove(pnlMultiGameMode);
 			pnlMultiGameMode = null;
 
-			pnlMultiCreateGame = new PnlMultiCreateGame(monController);
-			pane.add(pnlMultiCreateGame);
+			if (createGame) {
+				pnlMultiCreateGame = new PnlMultiCreateGame(monController);
+				pane.add(pnlMultiCreateGame);
+
+			} else {
+				LesParty lesParty = monController.getLesParty();
+
+				pnlMultiJoinGame = new PnlMultiJoinGame(monController, lesParty);
+				pane.add(pnlMultiJoinGame);
+				pnlMultiJoinGame.setVisible(false);
+				pnlMultiJoinGame.setVisible(true);
+			}
+		}
+
+		if (object instanceof PnlWaitingRoom) {
+			waitingScreen = false;
+			monController.startGameFromServer();
+
 		}
 	}
 
@@ -179,16 +253,27 @@ public class ConsoleGUI extends JFrame {
 			pane.add(pnlMultiGameMode);
 		}
 
+		if (object instanceof PnlMultiJoinGame) {
+			reloadJoinGame = false;
+			pnlMultiJoinGame.setVisible(false);
+			this.remove(pnlMultiJoinGame);
+			pnlMultiJoinGame = null;
+
+			pnlMultiGameMode = new PnlMultiGameMode(monController);
+			pane.add(pnlMultiGameMode);
+		}
+
 	}
 
-	private void startSoloMode(Player player) {
+	private void startSoloMode() {
 		try {
 			ArrayList<Question> quizQuestions;
-			quizQuestions = monController.getLaBase().getQuestions(numberOfQuestion);
-			monController.setLaGame(new QuizGame(monController, monController.getMonPlayer(), quizQuestions));
+			ArrayList<Integer> listeIdQuestion = monController.listeIdQuestion(numberOfQuestion);
+			quizQuestions = monController.getLaBase().getQuestions(listeIdQuestion);
+			monController.setLaParty(new Party(0, "solo", monController.getMonPlayer().getMyId(), null, quizQuestions,
+					numberOfQuestion));
 
-		//	new ClientWebsocket(monController);
-			currentQuestion = monController.getLaGame().getQuestions().get(numCurrentQuestion - 1);
+			currentQuestion = monController.getLaParty().getGroupQuestions().get(numCurrentQuestion - 1);
 
 			pnlDisplayQuiz = new PnlDisplayQuiz(monController, currentQuestion);
 			pane.add(pnlDisplayQuiz);
@@ -199,31 +284,20 @@ public class ConsoleGUI extends JFrame {
 		}
 	}
 
-	private void startMultiplayerMode(Player player) {
-		/*try {
-			Group theGroup = monController.getLaBase().getGroup(player.getaGroupId()); // create getGroup method
-			ArrayList<Question> quizQuestions = theGroup.getGroupQuestions();
-			monController.setLaGame(new QuizGame(monController, player, quizQuestions));
-			currentQuestion = monController.getLaGame().getQuestions().get(numCurrentQuestion - 1);
-			pnlDisplayQuiz.getLblQuestion().setText(currentQuestion.getDescriptionQuestion());
-			Enumeration<AbstractButton> allButtons = pnlDisplayQuiz.getBgAnswer().getElements();
+	private void startMultiplayerMode() {
+		// Selectionne la question en cours
+		currentQuestion = monController.getLaParty().getGroupQuestions().get(numCurrentQuestion - 1);
+		// Changement de panel
+		pnlDisplayQuiz = new PnlDisplayQuiz(monController, currentQuestion);
+		pane.add(pnlDisplayQuiz);
 
-			for (Answer answer : currentQuestion.getAnswers()) {
-				allButtons.nextElement().setText(answer.getDescriptionAnswer());
-			}
+		pnlDisplayQuiz.setVisible(false);
+		pnlDisplayQuiz.setVisible(true);
 
-			pnlDisplayQuiz.getLblScore()
-					.setText("Score : " + String.valueOf(monController.getLaGame().getMyPlayer().getMyScore()));
-			pnlDisplayQuiz.getLblNumQuestion().setText(
-					"Question " + String.valueOf(numCurrentQuestion) + " sur " + String.valueOf(numberOfQuestion));
-
-			numCurrentQuestion++;
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}*/
+		numCurrentQuestion++;
 	}
 
-	private void lancementQuiz(int nbQuestion, Boolean multiplayer) {
+	public void lancementQuiz(int nbQuestion, Boolean multiplayer) {
 		// Vérifie si le nom est entré
 
 		// setVisible();
@@ -231,52 +305,38 @@ public class ConsoleGUI extends JFrame {
 		numCurrentQuestion = 1;
 
 		if (multiplayer) {
-			Player thePlayer = new Player(monController, textNom, 0 /* get player's group id */);
-			startMultiplayerMode(thePlayer);
+			startMultiplayerMode();
 
 		} else {
-			Player thePlayer = new Player(monController, textNom, 0);
-			startSoloMode(thePlayer);
+			startSoloMode();
 		}
 
 	}
 
-	private Boolean isValidAnswer(int bgSelected) {
-		if (bgSelected == 4) {
-			return false;
+	public void questionTreatment(int bgSelected) {
+		// Changement de panel
+		pnlDisplayQuiz.setVisible(false);
+		pane.remove(pnlDisplayQuiz);
+		pnlDisplayQuiz = null;
+		
+		blPnlResultAnswer = true;
+
+		pnlResultAnswer = new PnlResultAnswer(monController);
+		pane.add(pnlResultAnswer);
+
+		if (monController.isCorrectThisAnswer(currentQuestion, bgSelected)) {
+			// Affiche que la réponse est correcte
+			pnlResultAnswer.getLblAnswer().setText("Bonne réponse Vous avez gagné 10 points");
 		} else {
-			return true;
+			// Affiche que la réponse est fausse
+			pnlResultAnswer.getLblAnswer().setText("Mauvaise réponse");
 		}
-	}
 
-	public void questionTreatment() {
-		// Num du bouton radio sélectionné
-		int bgSelected = Integer.parseInt(pnlDisplayQuiz.getBgAnswer().getSelection().getActionCommand());
-
-		if (this.isValidAnswer(bgSelected)) {
-			// Changement de panel
-			pnlDisplayQuiz.setVisible(false);
-			pane.remove(pnlDisplayQuiz);
-			pnlDisplayQuiz = null;
-
-			pnlResultAnswer = new PnlResultAnswer(monController);
-			pane.add(pnlResultAnswer);
-
-			if (monController.getLaGame().isCorrectThisAnswer(currentQuestion, bgSelected)) {
-				// Affiche que la réponse est correcte
-				pnlResultAnswer.getLblAnswer().setText("Bonne réponse Vous avez gagné 10 points");
-			} else {
-				// Affiche que la réponse est fausse
-				pnlResultAnswer.getLblAnswer().setText("Mauvaise réponse");
-			}
-		} else {
-			pnlDisplayQuiz.getLblErrorDisplayQuiz().setText("Veuillez séléctionner une réponse");
-		}
 	}
 
 	private void nextQuestion() {
 		// Selectionne la question en cours
-		currentQuestion = monController.getLaGame().getQuestions().get(numCurrentQuestion - 1);
+		currentQuestion = monController.getLaParty().getGroupQuestions().get(numCurrentQuestion - 1);
 
 		// Changement de panel
 		pnlDisplayQuiz = new PnlDisplayQuiz(monController, currentQuestion);
@@ -301,6 +361,14 @@ public class ConsoleGUI extends JFrame {
 		}
 
 		return resultMessageScore;
+	}
+
+	public PnlWaitingRoom getPnlWaitingRoom() {
+		return pnlWaitingRoom;
+	}
+
+	public void setPnlWaitingRoom(PnlWaitingRoom pnlWaitingRoom) {
+		this.pnlWaitingRoom = pnlWaitingRoom;
 	}
 
 	public PnlSoloCreateGame getPnlSoloCreateGame() {
@@ -390,4 +458,62 @@ public class ConsoleGUI extends JFrame {
 	public void setPnlLogin(PnlLogin pnlLogin) {
 		this.pnlLogin = pnlLogin;
 	}
+
+	public PnlMultiJoinGame getPnlMultiJoinGame() {
+		return pnlMultiJoinGame;
+	}
+
+	public void setPnlMultiJoinGame(PnlMultiJoinGame pnlMultiJoinGame) {
+		this.pnlMultiJoinGame = pnlMultiJoinGame;
+	}
+
+	public boolean isCreateGameMulti() {
+		return createGameMulti;
+	}
+
+	public void setCreateGameMulti(boolean createGameMulti) {
+		this.createGameMulti = createGameMulti;
+	}
+
+	public Container getPane() {
+		return pane;
+	}
+
+	public void setPane(Container pane) {
+		this.pane = pane;
+	}
+
+	public boolean isReloadJoinGame() {
+		return reloadJoinGame;
+	}
+
+	public void setReloadJoinGame(boolean reloadJoinGame) {
+		this.reloadJoinGame = reloadJoinGame;
+	}
+
+	public boolean isWaitingScreen() {
+		return waitingScreen;
+	}
+
+	public void setWaitingScreen(boolean waitingScreen) {
+		this.waitingScreen = waitingScreen;
+	}
+
+	public boolean isBlPnlResultAnswer() {
+		return blPnlResultAnswer;
+	}
+
+	public void setBlPnlResultAnswer(boolean blPnlResultAnswer) {
+		this.blPnlResultAnswer = blPnlResultAnswer;
+	}
+
+	public Question getCurrentQuestion() {
+		return currentQuestion;
+	}
+
+	public void setCurrentQuestion(Question currentQuestion) {
+		this.currentQuestion = currentQuestion;
+	}
+	
+	
 }

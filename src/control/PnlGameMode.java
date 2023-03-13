@@ -31,7 +31,7 @@ public class PnlGameMode extends JPanel {
 		this.setLayout(null);
 
 		JButton btnSoloPlayer = new JButton("Quiz Solo");
-		btnSoloPlayer.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnSoloPlayer.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		btnSoloPlayer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				monController.getLaConsole().setMulti(false);
@@ -43,7 +43,7 @@ public class PnlGameMode extends JPanel {
 		this.add(btnSoloPlayer);
 		
 		JButton btnMultiPlayer = new JButton("Quiz Multijoueurs");
-		btnMultiPlayer.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnMultiPlayer.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		btnMultiPlayer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				monController.getLaConsole().setMulti(true);
@@ -54,7 +54,7 @@ public class PnlGameMode extends JPanel {
 		this.add(btnMultiPlayer);
 
 		JLabel lblTitreGameMode = new JLabel("Bienvenue dans le Quiz Game Vinci");
-		lblTitreGameMode.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblTitreGameMode.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		lblTitreGameMode.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTitreGameMode.setBounds(10, 68, 658, 34);
 		this.add(lblTitreGameMode);
@@ -75,4 +75,7 @@ public class PnlGameMode extends JPanel {
 		this.lblErrorStartQuiz = lblErrorStartQuiz;
 	}
 
+	
+
+	
 }

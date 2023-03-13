@@ -26,7 +26,7 @@ public class PnlEndQuiz extends JPanel {
 		this.add(lblEndQuiz);
 
 		lblFinalScore = new JLabel("Votre score final est de "
-				+ String.valueOf(monController.getLaGame().getMyPlayer().getMyScore()) + " point(s).");
+				+ String.valueOf(monController.getMonPlayer().getMyScore()) + " point(s).");
 		lblFinalScore.setHorizontalAlignment(SwingConstants.CENTER);
 		lblFinalScore.setBounds(10, 163, 658, 32);
 		this.add(lblFinalScore);

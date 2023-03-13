@@ -11,12 +11,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import controller.Controller;
+import model.Party;
 
 public class PnlMultiCreateGame extends JPanel {
 
 	private Controller monController;
 
-	private JTextField textGroup;
+	private JTextField txtNameParty;
 	private ListNbQuestion listeNbQuestion;
 
 	public PnlMultiCreateGame(Controller unController) {
@@ -26,15 +27,15 @@ public class PnlMultiCreateGame extends JPanel {
 		this.setBounds(10, 10, 678, 453);
 		this.setLayout(null);
 
-		textGroup = new JTextField();
-		textGroup.setBounds(204, 157, 287, 48);
-		textGroup.setColumns(10);
-		this.add(textGroup);
+		txtNameParty = new JTextField();
+		txtNameParty.setBounds(204, 157, 287, 48);
+		txtNameParty.setColumns(10);
+		this.add(txtNameParty);
 
-		JLabel lblGroup = new JLabel("Nom du groupe :");
-		lblGroup.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblGroup.setBounds(41, 154, 153, 48);
-		this.add(lblGroup);
+		JLabel lblNameParty = new JLabel("Nom de la partie :");
+		lblNameParty.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblNameParty.setBounds(41, 154, 153, 48);
+		this.add(lblNameParty);
 
 		JLabel lblNbQuestionMulti = new JLabel("Nombre de questions :");
 		lblNbQuestionMulti.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -46,7 +47,10 @@ public class PnlMultiCreateGame extends JPanel {
 		this.add(btnLancementQuizMulti);
 		btnLancementQuizMulti.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				int nbQuestion = (int) listeNbQuestion.getSelectedItem();
+				monController.setLaParty(new Party(txtNameParty.getText(), monController.getMonPlayer().getMyId(), nbQuestion, monController.getMonPlayer()));
+				monController.getLaConsole().setCreateGameMulti(true);
+				monController.getLeClient().createGame();
 			}
 		});
 

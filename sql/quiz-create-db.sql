@@ -15,7 +15,11 @@ CREATE TABLE player (
 CREATE TABLE game (
     id_game INTEGER NOT NULL AUTO_INCREMENT,
     name_game VARCHAR(20),
-    PRIMARY KEY(id_game)
+    id_leader INTEGER,
+    progress_game SMALLINT,
+    start_game TIME,
+    PRIMARY KEY(id_game),
+    FOREIGN KEY (id_leader) REFERENCES player(id_player)
    );
 
 CREATE TABLE question(

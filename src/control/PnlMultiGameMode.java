@@ -13,6 +13,7 @@ import controller.Controller;
 public class PnlMultiGameMode extends JPanel {
 
 	private Controller monController;
+	private Boolean createGame;
 
 
 	public PnlMultiGameMode(Controller unController) {
@@ -24,6 +25,7 @@ public class PnlMultiGameMode extends JPanel {
 		JButton btnCreateGameMulti = new JButton("Créer un quiz");
 		btnCreateGameMulti.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				createGame = true;
 				monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlMultiGameMode());
 			}
 		});
@@ -33,6 +35,12 @@ public class PnlMultiGameMode extends JPanel {
 
 		JButton btnJoinGameMulti = new JButton("Rejoindre un quiz");
 		btnJoinGameMulti.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnJoinGameMulti.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				createGame = false;
+				monController.initLesParty();
+			}
+		});
 		btnJoinGameMulti.setBounds(390, 220, 160, 50);
 		this.add(btnJoinGameMulti);
 
@@ -45,4 +53,17 @@ public class PnlMultiGameMode extends JPanel {
 		btnMultiReturn.setBounds(267, 376, 103, 35);
 		this.add(btnMultiReturn);
 	}
+
+
+	public Boolean getCreateGame() {
+		return createGame;
+	}
+
+
+	public void setCreateGame(Boolean createGame) {
+		this.createGame = createGame;
+	}
+	
+	
+	
 }
