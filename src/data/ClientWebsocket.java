@@ -11,8 +11,8 @@ import com.esotericsoftware.kryonet.Listener;
 import controller.Controller;
 import enpoints.Message;
 import model.Answer;
-import model.LesParty;
-import model.Party;
+import model.LesGame;
+import model.Game;
 import model.Player;
 import model.Question;
 import model.QuizGame;
@@ -33,8 +33,8 @@ public class ClientWebsocket {
 		kryo.register(Answer.class);
 		kryo.register(Player.class);
 		kryo.register(Question.class);
-		kryo.register(Party.class);
-		kryo.register(LesParty.class);
+		kryo.register(Game.class);
+		kryo.register(LesGame.class);
 
 		client.start();
 
@@ -43,8 +43,8 @@ public class ClientWebsocket {
 		client.addListener(new Listener() {
 			public void received(Connection connection, Object object) {
 				
-				if (object instanceof Party) {
-					Party game = (Party) object;
+				if (object instanceof Game) {
+					Game game = (Game) object;
 					monController.setLaParty(game);
 					if (monController.getLaConsole().isCreateGameMulti()) {
 						monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlMultiCreateGame());
@@ -53,8 +53,8 @@ public class ClientWebsocket {
 					}
 				}
 
-				if (object instanceof LesParty) {
-					LesParty lesParty = (LesParty) object;
+				if (object instanceof LesGame) {
+					LesGame lesParty = (LesGame) object;
 					monController.setLesParty(lesParty);
 					if (monController.getLaConsole().isReloadJoinGame()) {
 						monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlMultiJoinGame());
@@ -76,9 +76,9 @@ public class ClientWebsocket {
 	}
 
 	public void searchGame() {
-		ArrayList<Party> lesParty = new ArrayList<Party>();
-		lesParty.add(new Party());
-		client.sendTCP(new LesParty(lesParty));
+		ArrayList<Game> lesParty = new ArrayList<Game>();
+		lesParty.add(new Game());
+		client.sendTCP(new LesGame(lesParty));
 	}
 
 	public void joinGame(int idGame) {

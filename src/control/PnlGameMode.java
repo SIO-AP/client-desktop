@@ -5,14 +5,14 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import controller.Controller;
-import model.Player;
+import view.ConsoleGUI;
 
 public class PnlGameMode extends JPanel {
 
@@ -26,7 +26,21 @@ public class PnlGameMode extends JPanel {
 	public PnlGameMode(Controller unController) {
 
 		monController = unController;
-
+		
+		JLabel lblNewLabel = new JLabel("");
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 5));
+		lblNewLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setIgnoreRepaint(true);
+		lblNewLabel.setIconTextGap(0);
+		lblNewLabel.setEnabled(false);
+		lblNewLabel.setIcon(new ImageIcon(ConsoleGUI.class.getResource("/img/background.png")));
+		lblNewLabel.setBounds(0, 0, 698, 473);
+		add(lblNewLabel);
+		
+		
+		setOpaque(true);
+		
 		this.setBounds(10, 10, 678, 453);
 		this.setLayout(null);
 

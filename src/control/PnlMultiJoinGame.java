@@ -17,8 +17,8 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
 import controller.Controller;
-import model.LesParty;
-import model.Party;
+import model.LesGame;
+import model.Game;
 
 public class PnlMultiJoinGame extends JPanel {
 
@@ -30,21 +30,21 @@ public class PnlMultiJoinGame extends JPanel {
 	private JLabel lblTimeGame2;
 	private JLabel lblIdGame2;
 
-	public PnlMultiJoinGame(Controller unController, LesParty lesParty) {
+	public PnlMultiJoinGame(Controller unController, LesGame lesParty) {
 		monController = unController;
-
+		setOpaque(false);
 		this.setBounds(10, 10, 678, 453);
 		this.setLayout(null);
 
-		int nbParty = lesParty.getLesParty().size();
+		int nbParty = lesParty.getLesGame().size();
 		if (nbParty > 0) {
 			this.datas = new String[nbParty][];
 
 			int i = 0;
 
-			for (Party party : lesParty.getLesParty()) {
+			for (Game party : lesParty.getLesGame()) {
 				String s[] = { party.getName(), Integer.toString(party.getNbQuestion()), party.getTime(),
-						Integer.toString(party.getIdParty()) };
+						Integer.toString(party.getIdGame()) };
 				datas[i] = s;
 				i++;
 			}

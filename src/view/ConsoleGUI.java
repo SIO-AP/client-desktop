@@ -26,11 +26,13 @@ import control.PnlSoloCreateGame;
 import control.PnlWaitingRoom;
 import controller.Controller;
 import data.ClientWebsocket;
-import model.LesParty;
-import model.Party;
+import model.LesGame;
+import model.Game;
 import model.Question;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.JButton;
+import javax.swing.ImageIcon;
 
 public class ConsoleGUI extends JFrame {
 
@@ -92,6 +94,18 @@ public class ConsoleGUI extends JFrame {
 		pnlLogin = new PnlLogin(monController);
 		pane.add(pnlLogin);
 
+//		JLabel lblNewLabel = new JLabel("");
+//		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 5));
+//		lblNewLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+//		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+//		lblNewLabel.setIgnoreRepaint(true);
+//		lblNewLabel.setIconTextGap(1);
+//		lblNewLabel.setIcon(new ImageIcon(ConsoleGUI.class.getResource("/img/background.png")));
+//		lblNewLabel.setBounds(0, 0, 698, 473);
+//		pane.add(lblNewLabel);
+
+		// pnlMultiCreateGame = new PnlMultiCreateGame(unController);
+		// pane.add(pnlMultiCreateGame);
 	}
 
 	public void NextPanel(Object object) {
@@ -162,7 +176,7 @@ public class ConsoleGUI extends JFrame {
 
 			if (reloadJoinGame) {
 
-				LesParty lesParty = monController.getLesParty();
+				LesGame lesParty = monController.getLesParty();
 
 				pnlMultiJoinGame = new PnlMultiJoinGame(monController, lesParty);
 				pane.add(pnlMultiJoinGame);
@@ -184,7 +198,7 @@ public class ConsoleGUI extends JFrame {
 			pnlResultAnswer.setVisible(false);
 			pane.remove(pnlResultAnswer);
 			pnlResultAnswer = null;
-			
+
 			blPnlResultAnswer = false;
 
 			if (numCurrentQuestion <= numberOfQuestion) {
@@ -209,7 +223,7 @@ public class ConsoleGUI extends JFrame {
 				pane.add(pnlMultiCreateGame);
 
 			} else {
-				LesParty lesParty = monController.getLesParty();
+				LesGame lesParty = monController.getLesParty();
 
 				pnlMultiJoinGame = new PnlMultiJoinGame(monController, lesParty);
 				pane.add(pnlMultiJoinGame);
@@ -270,8 +284,8 @@ public class ConsoleGUI extends JFrame {
 			ArrayList<Question> quizQuestions;
 			ArrayList<Integer> listeIdQuestion = monController.listeIdQuestion(numberOfQuestion);
 			quizQuestions = monController.getLaBase().getQuestions(listeIdQuestion);
-			monController.setLaParty(new Party(0, "solo", monController.getMonPlayer().getMyId(), null, quizQuestions,
-					numberOfQuestion));
+			monController.setLaParty(
+					new Game(0, "solo", monController.getMonPlayer().getMyId(), null, quizQuestions, numberOfQuestion));
 
 			currentQuestion = monController.getLaParty().getGroupQuestions().get(numCurrentQuestion - 1);
 
@@ -298,15 +312,11 @@ public class ConsoleGUI extends JFrame {
 	}
 
 	public void lancementQuiz(int nbQuestion, Boolean multiplayer) {
-		// Vérifie si le nom est entré
-
-		// setVisible();
 		numberOfQuestion = nbQuestion;
 		numCurrentQuestion = 1;
 
 		if (multiplayer) {
 			startMultiplayerMode();
-
 		} else {
 			startSoloMode();
 		}
@@ -318,7 +328,7 @@ public class ConsoleGUI extends JFrame {
 		pnlDisplayQuiz.setVisible(false);
 		pane.remove(pnlDisplayQuiz);
 		pnlDisplayQuiz = null;
-		
+
 		blPnlResultAnswer = true;
 
 		pnlResultAnswer = new PnlResultAnswer(monController);
@@ -514,6 +524,4 @@ public class ConsoleGUI extends JFrame {
 	public void setCurrentQuestion(Question currentQuestion) {
 		this.currentQuestion = currentQuestion;
 	}
-	
-	
 }
