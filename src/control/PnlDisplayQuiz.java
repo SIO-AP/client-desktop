@@ -33,6 +33,8 @@ public class PnlDisplayQuiz extends JPanel {
 
 	public PnlDisplayQuiz(Controller unController, Question currentQuestion) {
 		monController = unController;
+		
+		setOpaque(false);
 
 		this.setBounds(10, 10, 678, 453);
 		this.setLayout(null);
@@ -98,7 +100,7 @@ public class PnlDisplayQuiz extends JPanel {
 		Enumeration<AbstractButton> allButtons = bgAnswer.getElements();
 
 		for (Answer answer : currentQuestion.getAnswers()) {
-			allButtons.nextElement().setText("<html><p>" + answer.getDescriptionAnswer() + "</p>");
+			allButtons.nextElement().setText("<html><p>" + monController.getTheDecrypter().decrypt(answer.getDescriptionAnswer()) + "</p>");
 		}
 
 		// Sélectionne le dernier bouton radio

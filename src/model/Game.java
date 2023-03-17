@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import com.esotericsoftware.kryonet.Connection;
 
-public class Party {
+public class Game {
 
-	private int idParty;
+	private int idGame;
 	private String name;
 	private int idLeader;
 	private int nbQuestion;
@@ -16,9 +16,9 @@ public class Party {
 	private ArrayList<Connection> lesConnections;
 	private int statusGame;
 	
-	public Party() {};
+	public Game() {};
 	
-	public Party(String name, int idLeader, int nbQuestion, Player leader) {
+	public Game(String name, int idLeader, int nbQuestion, Player leader) {
 		this.name = name;
 		this.idLeader = idLeader;
 		this.nbQuestion = nbQuestion;
@@ -26,15 +26,15 @@ public class Party {
 		this.playerList.add(leader);	
 	}
 	
-	public Party(String name, int idParty, int nbQuestion, String time) {
+	public Game(String name, int idGame, int nbQuestion, String time) {
 		this.name = name;
 		this.nbQuestion = nbQuestion;
 		this.time = time;
-		this.idParty = idParty;
+		this.idGame = idGame;
 	}
 	
-	public Party(int idParty, String name, int idLeader, ArrayList<Player> playerList, ArrayList<Question> theQuestions, int nbQuestion) {
-		this.idParty = idParty;
+	public Game(int idGame, String name, int idLeader, ArrayList<Player> playerList, ArrayList<Question> theQuestions, int nbQuestion) {
+		this.idGame = idGame;
 		this.name = name;
 		this.idLeader = idLeader;
 		this.playerList = playerList;
@@ -42,8 +42,8 @@ public class Party {
 		this.nbQuestion = nbQuestion;
 	}
 	
-	public Party(int idParty, String name, int idLeader, ArrayList<Player> playerList, ArrayList<Question> theQuestions, int nbQuestion, String time, Connection connection) {
-		this.idParty = idParty;
+	public Game(int idGame, String name, int idLeader, ArrayList<Player> playerList, ArrayList<Question> theQuestions, int nbQuestion, String time, Connection connection) {
+		this.idGame = idGame;
 		this.name = name;
 		this.idLeader = idLeader;
 		this.playerList = playerList;
@@ -55,12 +55,12 @@ public class Party {
 		this.statusGame = 1;
 	}
 
-	public int getIdParty() {
-		return idParty;
+	public int getIdGame() {
+		return idGame;
 	}
 
-	public void setIdParty(int idParty) {
-		this.idParty = idParty;
+	public void setIdGame(int idGame) {
+		this.idGame = idGame;
 	}
 
 	public String getName() {

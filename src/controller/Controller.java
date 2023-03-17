@@ -15,8 +15,8 @@ import control.TablePlayer;
 import data.ClientWebsocket;
 import data.MySQLAccess;
 import enpoints.Message;
-import model.LesParty;
-import model.Party;
+import model.LesGame;
+import model.Game;
 import model.Player;
 import model.Question;
 import view.ConsoleGUI;
@@ -24,7 +24,7 @@ import view.ConsoleGUI;
 public class Controller {
 
 	private MySQLAccess laBase;
-	private LesParty lesParty;
+	private LesGame lesParty;
 	// specification
 	// user interact with console
 	private ConsoleGUI laConsole;
@@ -35,14 +35,16 @@ public class Controller {
 
 	// private QuizGame laGame;
 	private ClientWebsocket leClient;
-	private Party laParty;
+	private Game laParty;
+	private Jasypt theDecrypter;
 
 	public Controller() {
+		this.theDecrypter = new Jasypt();
 		this.laBase = new MySQLAccess(this);
 		this.laConsole = new ConsoleGUI(this);
 		this.laConsole.setVisible(true);
 		this.laConsole.setLocationRelativeTo(null);
-		
+
 	}
 
 	public void selectOption(Message message) {
@@ -106,7 +108,7 @@ public class Controller {
 		laConsole.getPnlWaitingRoom().setVisible(false);
 		laConsole.getPane().remove(laConsole.getPnlWaitingRoom());
 		laConsole.setPnlWaitingRoom(null);
-		
+
 		laConsole.setWaitingScreen(false);
 
 		int nbQuestion = getLaParty().getNbQuestion();
@@ -114,14 +116,15 @@ public class Controller {
 	}
 
 	public void startGameFromServer() {
-		leClient.launchGame(laParty.getIdParty());
-
+		leClient.launchGame(laParty.getIdGame());
 	}
 
 	public Boolean isCorrectThisAnswer(Question question, int idAnswer) {
 		if (question.getAnswers().get(idAnswer).getIsCorrect()) {
 			this.monPlayer.setMyScore(this.monPlayer.getMyScore() + 10);
-			leClient.getClient().sendTCP(new Message(5, laParty.getIdParty(), monPlayer));
+			if (laConsole.isMulti()) {
+				leClient.getClient().sendTCP(new Message(5, laParty.getIdGame(), monPlayer));
+			}
 			return true;
 		} else {
 			return false;
@@ -158,11 +161,11 @@ public class Controller {
 		leClient.searchGame();
 	}
 
-	public Party getLaParty() {
+	public Game getLaParty() {
 		return laParty;
 	}
 
-	public void setLaParty(Party laParty) {
+	public void setLaParty(Game laParty) {
 		this.laParty = laParty;
 	}
 
@@ -207,12 +210,20 @@ public class Controller {
 		this.leClient = leClient;
 	}
 
-	public LesParty getLesParty() {
+	public LesGame getLesParty() {
 		return lesParty;
 	}
 
-	public void setLesParty(LesParty lesParty) {
+	public void setLesParty(LesGame lesParty) {
 		this.lesParty = lesParty;
+	}
+
+	public Jasypt getTheDecrypter() {
+		return theDecrypter;
+	}
+
+	public void setTheDecrypter(Jasypt theDecrypter) {
+		this.theDecrypter = theDecrypter;
 	}
 
 }

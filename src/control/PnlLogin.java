@@ -25,7 +25,9 @@ public class PnlLogin extends JPanel {
 
 	public PnlLogin(Controller unController) {
 		monController = unController;
-
+		
+		setOpaque(false);
+		
 		this.setLayout(null);
 		this.setBounds(10, 10, 678, 453);
 

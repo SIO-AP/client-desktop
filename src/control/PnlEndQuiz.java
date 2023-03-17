@@ -15,7 +15,7 @@ public class PnlEndQuiz extends JPanel {
 
 	public PnlEndQuiz(Controller unController) {
 		monController = unController;
-
+		setOpaque(false);
 		this.setBounds(10, 10, 678, 453);
 		this.setLayout(null);
 

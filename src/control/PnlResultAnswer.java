@@ -19,7 +19,7 @@ public class PnlResultAnswer extends JPanel {
 
 	public PnlResultAnswer(Controller unController) {
 		monController = unController;
-
+		setOpaque(false);
 		this.setBounds(10, 10, 678, 453);
 		this.setLayout(null);
 

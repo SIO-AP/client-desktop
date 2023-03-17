@@ -21,7 +21,7 @@ public class PnlSoloCreateGame extends JPanel {
 
 	public PnlSoloCreateGame(Controller unController) {
 		monController = unController;
-
+		setOpaque(false);
 		this.setBounds(10, 10, 678, 453);
 		this.setLayout(null);
 

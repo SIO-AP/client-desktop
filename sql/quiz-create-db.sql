@@ -30,9 +30,11 @@ CREATE TABLE question(
 );
 
 CREATE TABLE answer (
+    id_answer INTEGER NOT NULL AUTO_INCREMENT,
     desc_answer VARCHAR(255),
     is_correct BOOLEAN,
     id_question INTEGER,
+    PRIMARY KEY(id_answer),
     FOREIGN KEY (id_question) REFERENCES question(id_question)
 );
 

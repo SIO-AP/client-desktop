@@ -8,11 +8,14 @@ import java.text.ParseException;
 import javax.swing.UnsupportedLookAndFeelException;
 
 public class Start {
-		
-    public static void main(String[] args) throws ParseException, UnsupportedLookAndFeelException, FileNotFoundException, ClassNotFoundException, IOException, SQLException  {
-    	
-        //controller instantiation
-    	Controller leController = new Controller();
-    }
+
+	public static void main(String[] args) throws ParseException, UnsupportedLookAndFeelException,
+			FileNotFoundException, ClassNotFoundException, IOException, SQLException {
+
+		// controller instantiation
+		Controller leController = new Controller();
+
+	}
 }
+
 

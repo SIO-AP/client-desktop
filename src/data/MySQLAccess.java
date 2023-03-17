@@ -46,14 +46,12 @@ public class MySQLAccess {
 			Class.forName(properties.getProperty("jdbc.driver.class"));
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		}
-
-		Jasypt theDecrypter = new Jasypt();
+		}	
 
 		// Initialise les paramètres de connexions
-		urlCnx = theDecrypter.decrypt(properties.getProperty("jdbc.url"));
-		loginCnx = theDecrypter.decrypt(properties.getProperty("jdbc.login"));
-		passwordCnx = theDecrypter.decrypt(properties.getProperty("jdbc.password"));
+		urlCnx = monController.getTheDecrypter().decrypt(properties.getProperty("jdbc.url"));
+		loginCnx = monController.getTheDecrypter().decrypt(properties.getProperty("jdbc.login"));
+		passwordCnx = monController.getTheDecrypter().decrypt(properties.getProperty("jdbc.password"));
 	}
 
 	public int nombreTotalQuestion() throws FileNotFoundException, ClassNotFoundException, IOException, SQLException {
@@ -79,8 +77,8 @@ public class MySQLAccess {
 			for (int i = 0; i < 4; i++) {
 				resultSet.next();
 				String indexA = Integer.toString(i + 1);
-				String descA = resultSet.getString(1);
-				Boolean resA = resultSet.getBoolean(2);
+				String descA = resultSet.getString(2);
+				Boolean resA = resultSet.getBoolean(3);
 				answers.add(new Answer(indexA, descA, resA));
 			}
 			return answers;
@@ -97,8 +95,6 @@ public class MySQLAccess {
 				Statement st = connection.createStatement()) {
 
 			for (int i : listeIdQuestion) {
-				System.out.println(i);
-
 				ResultSet resultSet = st.executeQuery("select * from question where id_question = " + i);
 				resultSet.next();
 

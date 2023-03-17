@@ -18,7 +18,7 @@ public class PnlMultiGameMode extends JPanel {
 
 	public PnlMultiGameMode(Controller unController) {
 		monController = unController;
-
+		setOpaque(false);
 		this.setBounds(10, 10, 678, 453);
 		this.setLayout(null);
 

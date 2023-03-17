@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import controller.Controller;
-import model.Party;
+import model.Game;
 
 public class PnlMultiCreateGame extends JPanel {
 
@@ -23,7 +23,7 @@ public class PnlMultiCreateGame extends JPanel {
 	public PnlMultiCreateGame(Controller unController) {
 
 		monController = unController;
-
+		setOpaque(false);
 		this.setBounds(10, 10, 678, 453);
 		this.setLayout(null);
 
@@ -48,7 +48,7 @@ public class PnlMultiCreateGame extends JPanel {
 		btnLancementQuizMulti.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int nbQuestion = (int) listeNbQuestion.getSelectedItem();
-				monController.setLaParty(new Party(txtNameParty.getText(), monController.getMonPlayer().getMyId(), nbQuestion, monController.getMonPlayer()));
+				monController.setLaParty(new Game(txtNameParty.getText(), monController.getMonPlayer().getMyId(), nbQuestion, monController.getMonPlayer()));
 				monController.getLaConsole().setCreateGameMulti(true);
 				monController.getLeClient().createGame();
 			}
