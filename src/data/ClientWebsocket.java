@@ -19,7 +19,7 @@ import model.QuizGame;
 
 public class ClientWebsocket {
 
-	private Client client = new Client(100000, 100000);
+	private Client client = new Client(10000000, 10000000);
 	private Controller monController;
 
 	public ClientWebsocket(Controller unController) throws IOException {
@@ -38,14 +38,14 @@ public class ClientWebsocket {
 
 		client.start();
 
-		client.connect(500000, "127.0.0.1", 54556, 54776);
+		client.connect(5000, "127.0.0.1", 54556);
 
 		client.addListener(new Listener() {
 			public void received(Connection connection, Object object) {
 				
 				if (object instanceof Game) {
 					Game game = (Game) object;
-					monController.setLaParty(game);
+					monController.setLaGame(game);
 					if (monController.getLaConsole().isCreateGameMulti()) {
 						monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlMultiCreateGame());
 					} else {
@@ -55,7 +55,7 @@ public class ClientWebsocket {
 
 				if (object instanceof LesGame) {
 					LesGame lesParty = (LesGame) object;
-					monController.setLesParty(lesParty);
+					monController.setLesGames(lesParty);
 					if (monController.getLaConsole().isReloadJoinGame()) {
 						monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlMultiJoinGame());
 					} else {
@@ -72,7 +72,7 @@ public class ClientWebsocket {
 	}
 
 	public void createGame() {
-		client.sendTCP(monController.getLaParty());
+		client.sendTCP(monController.getLaGame());
 	}
 
 	public void searchGame() {

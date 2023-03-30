@@ -1,7 +1,5 @@
 package model;
 
-import controller.Controller;
-
 public class Player {
 
 	private int myId;

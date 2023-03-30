@@ -24,7 +24,7 @@ import view.ConsoleGUI;
 public class Controller {
 
 	private MySQLAccess laBase;
-	private LesGame lesParty;
+	private LesGame lesGames;
 	// specification
 	// user interact with console
 	private ConsoleGUI laConsole;
@@ -35,7 +35,7 @@ public class Controller {
 
 	// private QuizGame laGame;
 	private ClientWebsocket leClient;
-	private Game laParty;
+	private Game laGame;
 	private Jasypt theDecrypter;
 
 	public Controller() {
@@ -59,7 +59,7 @@ public class Controller {
 	}
 
 	private void setListPlayerGame(Message message) {
-		laParty.setPlayerList(message.getLesPlayer());
+		laGame.setPlayerList(message.getLesPlayer());
 		if (laConsole.isWaitingScreen()) {
 			try {
 				laConsole.getPnlWaitingRoom().getTablePlayer().setVisible(false);
@@ -100,7 +100,7 @@ public class Controller {
 				"Impossible de rejoindre la partie", JOptionPane.ERROR_MESSAGE);
 
 		laConsole.setReloadJoinGame(true);
-		initLesParty();
+		initLesGames();
 
 	}
 
@@ -111,19 +111,19 @@ public class Controller {
 
 		laConsole.setWaitingScreen(false);
 
-		int nbQuestion = getLaParty().getNbQuestion();
+		int nbQuestion = getLaGame().getNbQuestion();
 		laConsole.lancementQuiz(nbQuestion, true);
 	}
 
 	public void startGameFromServer() {
-		leClient.launchGame(laParty.getIdGame());
+		leClient.launchGame(laGame.getIdGame());
 	}
 
 	public Boolean isCorrectThisAnswer(Question question, int idAnswer) {
 		if (question.getAnswers().get(idAnswer).getIsCorrect()) {
 			this.monPlayer.setMyScore(this.monPlayer.getMyScore() + 10);
 			if (laConsole.isMulti()) {
-				leClient.getClient().sendTCP(new Message(5, laParty.getIdGame(), monPlayer));
+				leClient.getClient().sendTCP(new Message(5, laGame.getIdGame(), monPlayer));
 			}
 			return true;
 		} else {
@@ -157,16 +157,16 @@ public class Controller {
 		return randomNumber;
 	}
 
-	public void initLesParty() {
+	public void initLesGames() {
 		leClient.searchGame();
 	}
 
-	public Game getLaParty() {
-		return laParty;
+	public Game getLaGame() {
+		return laGame;
 	}
 
-	public void setLaParty(Game laParty) {
-		this.laParty = laParty;
+	public void setLaGame(Game laGame) {
+		this.laGame = laGame;
 	}
 
 	public MySQLAccess getLaBase() {
@@ -210,12 +210,12 @@ public class Controller {
 		this.leClient = leClient;
 	}
 
-	public LesGame getLesParty() {
-		return lesParty;
+	public LesGame getLesGames() {
+		return lesGames;
 	}
 
-	public void setLesParty(LesGame lesParty) {
-		this.lesParty = lesParty;
+	public void setLesGames(LesGame lesGames) {
+		this.lesGames = lesGames;
 	}
 
 	public Jasypt getTheDecrypter() {
