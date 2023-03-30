@@ -96,7 +96,7 @@ public class PnlMultiJoinGame extends JPanel {
 		btnReloadGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				monController.getLaConsole().setReloadJoinGame(true);
-				monController.initLesParty();
+				monController.initLesGames();
 			}
 		});
 		btnReloadGame.setFont(new Font("Tahoma", Font.PLAIN, 12));

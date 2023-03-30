@@ -1,7 +1,7 @@
 /control/
-/controller/
 /data/
-/enpoints/
-/model/
-/view/
 /img/
+/model/
+/controller/
+/enpoints/
+/view/

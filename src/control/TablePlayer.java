@@ -13,7 +13,6 @@ import javax.swing.table.TableModel;
 import controller.Controller;
 import model.Player;
 
-
 public class TablePlayer extends JScrollPane {
 	private Controller monController;
 	private String[][] datas;
@@ -22,9 +21,9 @@ public class TablePlayer extends JScrollPane {
 	public TablePlayer(Controller unController, int x, int y, int w, int h) {
 		monController = unController;
 
-		this.datas = new String[monController.getLaParty().getPlayerList().size()][];
+		this.datas = new String[monController.getLaGame().getPlayerList().size()][];
 		int i = 0;
-		for (Player player : monController.getLaParty().getPlayerList()) {
+		for (Player player : monController.getLaGame().getPlayerList()) {
 			String s[] = { player.getMyName(), Integer.toString(player.getMyScore()) };
 			datas[i] = s;
 			i++;
@@ -33,9 +32,9 @@ public class TablePlayer extends JScrollPane {
 		table = new JTable(new TableModelPlayer(datas));
 
 		table.getTableHeader().setReorderingAllowed(false);
-		
+
 		setViewportView(table);
-		//new JScrollPane(table);
+		// new JScrollPane(table);
 
 		setBounds(x, y, w, h);
 

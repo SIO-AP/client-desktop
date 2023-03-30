@@ -2,17 +2,25 @@
 package view;
 
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
+import javax.swing.SwingConstants;
 
 import control.PnlDisplayQuiz;
 import control.PnlEndQuiz;
@@ -26,13 +34,9 @@ import control.PnlSoloCreateGame;
 import control.PnlWaitingRoom;
 import controller.Controller;
 import data.ClientWebsocket;
-import model.LesGame;
 import model.Game;
+import model.LesGame;
 import model.Question;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-import javax.swing.JButton;
-import javax.swing.ImageIcon;
 
 public class ConsoleGUI extends JFrame {
 
@@ -64,6 +68,11 @@ public class ConsoleGUI extends JFrame {
 	private boolean reloadJoinGame = false;
 	private boolean waitingScreen = false;
 	private boolean blPnlResultAnswer = false;
+	
+
+    private JLabel label;
+    private JSpinner spinner;
+    private SpinnerDateModel model;
 
 	public ConsoleGUI(Controller unController) {
 		// Appelle le constructeur de la classe mère
@@ -85,27 +94,38 @@ public class ConsoleGUI extends JFrame {
 		setResizable(false);
 		setFont(new Font("Consolas", Font.PLAIN, 12));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+		BufferedImage myImage;
+		try {
+			myImage = ImageIO.read(getClass().getClassLoader().getResource("img/background.png"));
+		//	myImage = ImageIO.read(getClass().getClassLoader().getResource("img/image.png"));
+			setContentPane(new ImagePanel(myImage));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 
 		// Pane pointe sur le container racine
 		pane = getContentPane();
+		
 		// Fixe le Layout de la racine � Absolute
 		pane.setLayout(null);
+		
+//		JButton btnNewButton = new JButton("New button");
+//		btnNewButton.setBounds(120, 101, 203, 109);
+//		getContentPane().add(btnNewButton);
 
 		pnlLogin = new PnlLogin(monController);
 		pane.add(pnlLogin);
 
-//		JLabel lblNewLabel = new JLabel("");
-//		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 5));
-//		lblNewLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-//		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-//		lblNewLabel.setIgnoreRepaint(true);
-//		lblNewLabel.setIconTextGap(1);
-//		lblNewLabel.setIcon(new ImageIcon(ConsoleGUI.class.getResource("/img/background.png")));
-//		lblNewLabel.setBounds(0, 0, 698, 473);
-//		pane.add(lblNewLabel);
-
-		// pnlMultiCreateGame = new PnlMultiCreateGame(unController);
-		// pane.add(pnlMultiCreateGame);
+//		 pnlMultiCreateGame = new PnlMultiCreateGame(unController);
+//		 pane.add(pnlMultiCreateGame);
+		
+		
+	//	HeureInput heureInput = new HeureInput();
+	//	pane.add(heureInput);
+		
 	}
 
 	public void NextPanel(Object object) {
@@ -176,7 +196,7 @@ public class ConsoleGUI extends JFrame {
 
 			if (reloadJoinGame) {
 
-				LesGame lesParty = monController.getLesParty();
+				LesGame lesParty = monController.getLesGames();
 
 				pnlMultiJoinGame = new PnlMultiJoinGame(monController, lesParty);
 				pane.add(pnlMultiJoinGame);
@@ -223,7 +243,7 @@ public class ConsoleGUI extends JFrame {
 				pane.add(pnlMultiCreateGame);
 
 			} else {
-				LesGame lesParty = monController.getLesParty();
+				LesGame lesParty = monController.getLesGames();
 
 				pnlMultiJoinGame = new PnlMultiJoinGame(monController, lesParty);
 				pane.add(pnlMultiJoinGame);
@@ -236,6 +256,18 @@ public class ConsoleGUI extends JFrame {
 			waitingScreen = false;
 			monController.startGameFromServer();
 
+		}
+		
+		if (object instanceof PnlEndQuiz) {
+			pnlEndQuiz.setVisible(false);
+			pane.remove(pnlEndQuiz);
+			pnlEndQuiz = null;
+			
+			monController.setLaGame(null);
+			monController.getMonPlayer().setMyScore(0);
+			
+			pnlGameMode = new PnlGameMode(monController);
+			pane.add(pnlGameMode);
 		}
 	}
 
@@ -253,6 +285,8 @@ public class ConsoleGUI extends JFrame {
 			pnlMultiGameMode.setVisible(false);
 			this.remove(pnlMultiGameMode);
 			pnlMultiGameMode = null;
+			
+			monController.getLeClient().getClient().close();
 
 			pnlGameMode = new PnlGameMode(monController);
 			pane.add(pnlGameMode);
@@ -284,10 +318,10 @@ public class ConsoleGUI extends JFrame {
 			ArrayList<Question> quizQuestions;
 			ArrayList<Integer> listeIdQuestion = monController.listeIdQuestion(numberOfQuestion);
 			quizQuestions = monController.getLaBase().getQuestions(listeIdQuestion);
-			monController.setLaParty(
+			monController.setLaGame(
 					new Game(0, "solo", monController.getMonPlayer().getMyId(), null, quizQuestions, numberOfQuestion));
 
-			currentQuestion = monController.getLaParty().getGroupQuestions().get(numCurrentQuestion - 1);
+			currentQuestion = monController.getLaGame().getGroupQuestions().get(numCurrentQuestion - 1);
 
 			pnlDisplayQuiz = new PnlDisplayQuiz(monController, currentQuestion);
 			pane.add(pnlDisplayQuiz);
@@ -300,7 +334,7 @@ public class ConsoleGUI extends JFrame {
 
 	private void startMultiplayerMode() {
 		// Selectionne la question en cours
-		currentQuestion = monController.getLaParty().getGroupQuestions().get(numCurrentQuestion - 1);
+		currentQuestion = monController.getLaGame().getGroupQuestions().get(numCurrentQuestion - 1);
 		// Changement de panel
 		pnlDisplayQuiz = new PnlDisplayQuiz(monController, currentQuestion);
 		pane.add(pnlDisplayQuiz);
@@ -346,7 +380,7 @@ public class ConsoleGUI extends JFrame {
 
 	private void nextQuestion() {
 		// Selectionne la question en cours
-		currentQuestion = monController.getLaParty().getGroupQuestions().get(numCurrentQuestion - 1);
+		currentQuestion = monController.getLaGame().getGroupQuestions().get(numCurrentQuestion - 1);
 
 		// Changement de panel
 		pnlDisplayQuiz = new PnlDisplayQuiz(monController, currentQuestion);
@@ -524,4 +558,52 @@ public class ConsoleGUI extends JFrame {
 	public void setCurrentQuestion(Question currentQuestion) {
 		this.currentQuestion = currentQuestion;
 	}
+}
+
+class ImagePanel extends JComponent {
+    private Image image;
+    public ImagePanel(Image image) {
+        this.image = image;
+    }
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.drawImage(image, 0, 0, this);
+    }
+}
+
+class HeureInput extends JPanel {
+    private JLabel label;
+    private JSpinner spinner;
+    private SpinnerDateModel model;
+
+    public HeureInput() {
+        label = new JLabel("Heure : ");
+        model = new SpinnerDateModel();
+        spinner = new JSpinner(model);
+
+        // Configuration de la zone de saisie
+        JSpinner.DateEditor editor = new JSpinner.DateEditor(spinner, "HH:mm:ss");
+        editor.getTextField().setEditable(false); // permettre la saisie manuelle
+        spinner.setEditor(editor);
+        spinner.setPreferredSize(new Dimension(150, 48));
+        Font font = spinner.getFont();
+        spinner.setFont(new Font(font.getName(), font.getStyle(), 20)); // taille de police de 20 points
+
+        // Centrage de l'heure dans le spinner
+        JSpinner.DefaultEditor spinnerEditor = (JSpinner.DefaultEditor) spinner.getEditor();
+        spinnerEditor.getTextField().setHorizontalAlignment(SwingConstants.CENTER);
+
+        
+        // Ajout des éléments à la fenêtre
+        setLayout(new FlowLayout());
+        add(label);
+        add(spinner);
+        setBounds(0, 0, 400, 400);
+    }
+
+    // Méthode pour récupérer l'heure saisie
+    public String getHeure() {
+        return model.getValue().toString();
+    }
 }
