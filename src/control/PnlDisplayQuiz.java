@@ -49,24 +49,28 @@ public class PnlDisplayQuiz extends JPanel {
 		rdbtn1.setActionCommand("0");
 		rdbtn1.setBounds(60, 120, 418, 30);
 		rdbtn1.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		rdbtn1.setOpaque(false);
 		this.add(rdbtn1);
 
 		JRadioButton rdbtn2 = new JRadioButton("");
 		rdbtn2.setActionCommand("1");
 		rdbtn2.setBounds(60, 165, 418, 30);
 		rdbtn2.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		rdbtn2.setOpaque(false);
 		this.add(rdbtn2);
 
 		JRadioButton rdbtn3 = new JRadioButton("");
 		rdbtn3.setActionCommand("2");
 		rdbtn3.setBounds(60, 210, 418, 30);
 		rdbtn3.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		rdbtn3.setOpaque(false);
 		this.add(rdbtn3);
 
 		JRadioButton rdbtn4 = new JRadioButton("");
 		rdbtn4.setActionCommand("3");
 		rdbtn4.setBounds(60, 255, 418, 30);
 		rdbtn4.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		rdbtn4.setOpaque(false);
 		this.add(rdbtn4);
 
 		JRadioButton rdbtn5 = new JRadioButton("");
