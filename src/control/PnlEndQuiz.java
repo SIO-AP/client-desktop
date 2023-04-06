@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import controller.Controller;
+import view.ConsoleGUI;
 
 public class PnlEndQuiz extends JPanel {
 
@@ -19,8 +20,12 @@ public class PnlEndQuiz extends JPanel {
 
 	public PnlEndQuiz(Controller unController) {
 		monController = unController;
+
+		monController.getLaConsole().setBackground("img/link 2.png");
+
 		setOpaque(false);
-		this.setBounds(10, 10, 678, 453);
+
+		this.setBounds(ConsoleGUI.rectangle);
 		this.setLayout(null);
 
 		JLabel lblEndQuiz = new JLabel("Fin du Quiz");
@@ -38,16 +43,25 @@ public class PnlEndQuiz extends JPanel {
 		JButton btnMultiReturn = new JButton("Menu");
 		btnMultiReturn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlEndQuiz());
+				monController.NextPanel(monController.getLaConsole().getPnlEndQuiz());
 			}
 		});
 		btnMultiReturn.setBounds(267, 376, 103, 35);
 		this.add(btnMultiReturn);
-		
+
 		if (monController.getLaConsole().isMulti()) {
-			tablePlayer = new TablePlayer(monController, 257, 330, 400, 100);
+			tablePlayer = new TablePlayer(monController, 10, 90, 658, 246, true);
 			this.add(tablePlayer);
 		}
 
 	}
+
+	public TablePlayer getTablePlayer() {
+		return tablePlayer;
+	}
+
+	public void setTablePlayer(TablePlayer tablePlayer) {
+		this.tablePlayer = tablePlayer;
+	}
+
 }

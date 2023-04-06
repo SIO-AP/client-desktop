@@ -18,6 +18,7 @@ import javax.swing.table.TableModel;
 
 import controller.Controller;
 import model.LesGame;
+import view.ConsoleGUI;
 import model.Game;
 
 public class PnlMultiJoinGame extends JPanel {
@@ -32,8 +33,12 @@ public class PnlMultiJoinGame extends JPanel {
 
 	public PnlMultiJoinGame(Controller unController, LesGame lesParty) {
 		monController = unController;
+
+		monController.getLaConsole().setBackground("img/link 2.png");
+
 		setOpaque(false);
-		this.setBounds(10, 10, 678, 453);
+
+		this.setBounds(ConsoleGUI.rectangle);
 		this.setLayout(null);
 
 		int nbParty = lesParty.getLesGame().size();
@@ -106,7 +111,7 @@ public class PnlMultiJoinGame extends JPanel {
 		JButton btnJoinReturn = new JButton("Annuler");
 		btnJoinReturn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				monController.getLaConsole().PreviousPanel(monController.getLaConsole().getPnlMultiJoinGame());
+				monController.PreviousPanel(monController.getLaConsole().getPnlMultiJoinGame());
 			}
 		});
 		btnJoinReturn.setFont(new Font("Tahoma", Font.PLAIN, 12));

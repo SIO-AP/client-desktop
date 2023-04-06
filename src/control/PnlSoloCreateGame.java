@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import controller.Controller;
+import view.ConsoleGUI;
 
 public class PnlSoloCreateGame extends JPanel {
 
@@ -21,8 +22,12 @@ public class PnlSoloCreateGame extends JPanel {
 
 	public PnlSoloCreateGame(Controller unController) {
 		monController = unController;
+
+		monController.getLaConsole().setBackground("img/link 2.png");
+
 		setOpaque(false);
-		this.setBounds(10, 10, 678, 453);
+
+		this.setBounds(ConsoleGUI.rectangle);
 		this.setLayout(null);
 
 		JLabel lblTitre = new JLabel("Quiz Game");
@@ -35,14 +40,14 @@ public class PnlSoloCreateGame extends JPanel {
 		this.add(btnLancementQuizSolo);
 		btnLancementQuizSolo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlSoloCreateGame());
+				monController.NextPanel(monController.getLaConsole().getPnlSoloCreateGame());
 			}
 		});
 
 		JButton btnSoloReturn = new JButton("Retour");
 		btnSoloReturn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				monController.getLaConsole().PreviousPanel(monController.getLaConsole().getPnlSoloCreateGame());
+				monController.PreviousPanel(monController.getLaConsole().getPnlSoloCreateGame());
 			}
 		});
 		btnSoloReturn.setBounds(267, 376, 103, 35);

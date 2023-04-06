@@ -15,6 +15,7 @@ import javax.swing.table.TableModel;
 
 import controller.Controller;
 import model.Player;
+import view.ConsoleGUI;
 
 public class PnlWaitingRoom extends JPanel {
 	private Controller monController;
@@ -22,15 +23,19 @@ public class PnlWaitingRoom extends JPanel {
 
 	public PnlWaitingRoom(Controller unController) {
 		monController = unController;
+
+		monController.getLaConsole().setBackground("img/link 2.png");
+
 		setOpaque(false);
-		this.setBounds(10, 10, 678, 453);
+
+		this.setBounds(ConsoleGUI.rectangle);
 		this.setLayout(null);
 
 		if (monController.getLaConsole().isCreateGameMulti()) {
 			JButton btnStart = new JButton("Commencer");
 			btnStart.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlWaitingRoom());
+					monController.NextPanel(monController.getLaConsole().getPnlWaitingRoom());
 				}
 			});
 			btnStart.setBounds(254, 357, 201, 46);
@@ -38,7 +43,7 @@ public class PnlWaitingRoom extends JPanel {
 		}
 
 //		jp.setBounds(10, 47, 658, 246);
-		tablePlayer = new TablePlayer(monController, 10, 47, 658, 246);
+		tablePlayer = new TablePlayer(monController, 10, 47, 658, 246, false);
 		this.add(tablePlayer);
 	}
 
