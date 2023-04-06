@@ -18,12 +18,13 @@ public class Game {
 	
 	public Game() {};
 	
-	public Game(String name, int idLeader, int nbQuestion, Player leader) {
+	public Game(String name, int idLeader, int nbQuestion, Player leader, String time) {
 		this.name = name;
 		this.idLeader = idLeader;
 		this.nbQuestion = nbQuestion;
 		this.playerList = new ArrayList<Player>();
-		this.playerList.add(leader);	
+		this.playerList.add(leader);
+		this.time = time;
 	}
 	
 	public Game(String name, int idGame, int nbQuestion, String time) {
@@ -33,13 +34,14 @@ public class Game {
 		this.idGame = idGame;
 	}
 	
-	public Game(int idGame, String name, int idLeader, ArrayList<Player> playerList, ArrayList<Question> theQuestions, int nbQuestion) {
+	public Game(int idGame, String name, int idLeader, ArrayList<Player> playerList, ArrayList<Question> theQuestions, int nbQuestion, String time) {
 		this.idGame = idGame;
 		this.name = name;
 		this.idLeader = idLeader;
 		this.playerList = playerList;
 		this.groupQuestions = theQuestions;
 		this.nbQuestion = nbQuestion;
+		this.time = time;
 	}
 	
 	public Game(int idGame, String name, int idLeader, ArrayList<Player> playerList, ArrayList<Question> theQuestions, int nbQuestion, String time, Connection connection) {

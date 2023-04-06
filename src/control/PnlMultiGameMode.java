@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import controller.Controller;
+import view.ConsoleGUI;
 
 public class PnlMultiGameMode extends JPanel {
 
@@ -18,15 +19,19 @@ public class PnlMultiGameMode extends JPanel {
 
 	public PnlMultiGameMode(Controller unController) {
 		monController = unController;
+
+		monController.getLaConsole().setBackground("img/link 2.png");
+
 		setOpaque(false);
-		this.setBounds(10, 10, 678, 453);
+
+		this.setBounds(ConsoleGUI.rectangle);
 		this.setLayout(null);
 
 		JButton btnCreateGameMulti = new JButton("Créer un quiz");
 		btnCreateGameMulti.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				createGame = true;
-				monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlMultiGameMode());
+				monController.NextPanel(monController.getLaConsole().getPnlMultiGameMode());
 			}
 		});
 		btnCreateGameMulti.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -47,7 +52,7 @@ public class PnlMultiGameMode extends JPanel {
 		JButton btnMultiReturn = new JButton("Annuler");
 		btnMultiReturn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				monController.getLaConsole().PreviousPanel(monController.getLaConsole().getPnlMultiGameMode());
+				monController.PreviousPanel(monController.getLaConsole().getPnlMultiGameMode());
 			}
 		});
 		btnMultiReturn.setBounds(267, 376, 103, 35);
@@ -55,7 +60,7 @@ public class PnlMultiGameMode extends JPanel {
 	}
 
 
-	public Boolean getCreateGame() {
+	public Boolean isCreateGame() {
 		return createGame;
 	}
 

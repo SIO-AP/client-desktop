@@ -41,15 +41,21 @@ public class ClientWebsocket {
 		client.connect(5000, "127.0.0.1", 54556);
 
 		client.addListener(new Listener() {
+			
+			public void disconnected(Connection connection) {
+		        System.out.println("déco");	 
+		    }
+			
+			
 			public void received(Connection connection, Object object) {
 				
 				if (object instanceof Game) {
 					Game game = (Game) object;
 					monController.setLaGame(game);
 					if (monController.getLaConsole().isCreateGameMulti()) {
-						monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlMultiCreateGame());
+						monController.NextPanel(monController.getLaConsole().getPnlMultiCreateGame());
 					} else {
-						monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlMultiJoinGame());
+						monController.NextPanel(monController.getLaConsole().getPnlMultiJoinGame());
 					}
 				}
 
@@ -57,9 +63,9 @@ public class ClientWebsocket {
 					LesGame lesParty = (LesGame) object;
 					monController.setLesGames(lesParty);
 					if (monController.getLaConsole().isReloadJoinGame()) {
-						monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlMultiJoinGame());
+						monController.NextPanel(monController.getLaConsole().getPnlMultiJoinGame());
 					} else {
-						monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlMultiGameMode());
+						monController.NextPanel(monController.getLaConsole().getPnlMultiGameMode());
 					}
 				}
 
@@ -76,9 +82,9 @@ public class ClientWebsocket {
 	}
 
 	public void searchGame() {
-		ArrayList<Game> lesParty = new ArrayList<Game>();
-		lesParty.add(new Game());
-		client.sendTCP(new LesGame(lesParty));
+		ArrayList<Game> lesGames = new ArrayList<Game>();
+		lesGames.add(new Game());
+		client.sendTCP(new LesGame(lesGames));
 	}
 
 	public void joinGame(int idGame) {

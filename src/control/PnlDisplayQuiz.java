@@ -19,6 +19,7 @@ import javax.swing.border.BevelBorder;
 import controller.Controller;
 import model.Answer;
 import model.Question;
+import view.ConsoleGUI;
 
 public class PnlDisplayQuiz extends JPanel {
 
@@ -33,14 +34,17 @@ public class PnlDisplayQuiz extends JPanel {
 
 	public PnlDisplayQuiz(Controller unController, Question currentQuestion) {
 		monController = unController;
-		
+
+		monController.getLaConsole().setBackground("img/PnlDisplayQuiz/back.png");
+
 		setOpaque(false);
 
-		this.setBounds(10, 10, 678, 453);
+		this.setBounds(ConsoleGUI.rectangle);
 		this.setLayout(null);
 
-	//	lblQuestion = new JTextArea(currentQuestion.getDescriptionQuestion());
-		lblQuestion = new JLabel("<html><p text-align: center>" + currentQuestion.getDescriptionQuestion() + "</p>", JLabel.CENTER);
+		// lblQuestion = new JTextArea(currentQuestion.getDescriptionQuestion());
+		lblQuestion = new JLabel("<html><p text-align: center>" + currentQuestion.getDescriptionQuestion() + "</p>",
+				JLabel.CENTER);
 		lblQuestion.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		lblQuestion.setBounds(10, 30, 658, 40);
 		this.add(lblQuestion);
@@ -104,14 +108,15 @@ public class PnlDisplayQuiz extends JPanel {
 		Enumeration<AbstractButton> allButtons = bgAnswer.getElements();
 
 		for (Answer answer : currentQuestion.getAnswers()) {
-			allButtons.nextElement().setText("<html><p>" + monController.getTheDecrypter().decrypt(answer.getDescriptionAnswer()) + "</p>");
+			allButtons.nextElement().setText(
+					"<html><p>" + monController.getTheDecrypter().decrypt(answer.getDescriptionAnswer()) + "</p>");
 		}
 
 		// Sélectionne le dernier bouton radio
 		allButtons.nextElement().setSelected(true);
-		
+
 		if (monController.getLaConsole().isMulti()) {
-			tablePlayer = new TablePlayer(monController, 257, 330, 400, 100);
+			tablePlayer = new TablePlayer(monController, 257, 330, 400, 100, true);
 			this.add(tablePlayer);
 		}
 
@@ -126,14 +131,14 @@ public class PnlDisplayQuiz extends JPanel {
 		lblScore.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		pnlInformationDisplayQuiz.add(lblScore);
 
-		lblNumQuestion = new JLabel("Question " + String.valueOf(monController.getLaConsole().getNumCurrentQuestion())
-				+ " sur " + String.valueOf(monController.getLaConsole().getNumberOfQuestion()));
+		lblNumQuestion = new JLabel("Question " + String.valueOf(monController.getMonPlayer().getNbQuestion())
+				+ " sur " + String.valueOf(monController.getLaGame().getNbQuestion()));
 		lblNumQuestion.setBounds(10, 33, 136, 14);
 		lblNumQuestion.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		pnlInformationDisplayQuiz.add(lblNumQuestion);
 
 	}
-	
+
 	private void isValidAnswer() {
 		int bgSelected = Integer.parseInt(bgAnswer.getSelection().getActionCommand());
 		if (bgSelected == 4) {
