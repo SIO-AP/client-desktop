@@ -20,42 +20,40 @@ public class PnlMultiGameMode extends JPanel {
 	public PnlMultiGameMode(Controller unController) {
 		monController = unController;
 
-		monController.getLaConsole().setBackground("img/link 2.png");
+		monController.getLaConsole().setBackground("img/PnlMultiGameMode/back.png");
 
 		setOpaque(false);
 
 		this.setBounds(ConsoleGUI.rectangle);
 		this.setLayout(null);
 
-		JButton btnCreateGameMulti = new JButton("Créer un quiz");
+		ButtonDisplay btnCreateGameMulti = new ButtonDisplay(500, 100, 500, 50,
+				"img/PnlMultiGameMode/creer_quiz_eteint.png", "img/PnlMultiGameMode/creer_quiz_allume.png");
 		btnCreateGameMulti.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				createGame = true;
 				monController.NextPanel(monController.getLaConsole().getPnlMultiGameMode());
 			}
 		});
-		btnCreateGameMulti.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		btnCreateGameMulti.setBounds(130, 220, 160, 50);
 		this.add(btnCreateGameMulti);
 
-		JButton btnJoinGameMulti = new JButton("Rejoindre un quiz");
-		btnJoinGameMulti.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		JButton btnJoinGameMulti = new ButtonDisplay(500, 300, 500, 50,
+				"img/PnlMultiGameMode/rejoindre_quiz_eteint.png", "img/PnlMultiGameMode/rejoindre_quiz_allume.png");
 		btnJoinGameMulti.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				createGame = false;
 				monController.initLesGames();
 			}
 		});
-		btnJoinGameMulti.setBounds(390, 220, 160, 50);
 		this.add(btnJoinGameMulti);
 
-		JButton btnMultiReturn = new JButton("Annuler");
+		JButton btnMultiReturn = new ButtonDisplay(700, 500, 250, 50,
+				"img/PnlMultiGameMode/retour_eteint.png", "img/PnlMultiGameMode/retour_allume.png");
 		btnMultiReturn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				monController.PreviousPanel(monController.getLaConsole().getPnlMultiGameMode());
 			}
 		});
-		btnMultiReturn.setBounds(267, 376, 103, 35);
 		this.add(btnMultiReturn);
 	}
 

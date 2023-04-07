@@ -23,7 +23,7 @@ public class PnlSoloCreateGame extends JPanel {
 	public PnlSoloCreateGame(Controller unController) {
 		monController = unController;
 
-		monController.getLaConsole().setBackground("img/link 2.png");
+		monController.getLaConsole().setBackground("img/PnlCreateGame/back.png");
 
 		setOpaque(false);
 
@@ -52,12 +52,6 @@ public class PnlSoloCreateGame extends JPanel {
 		});
 		btnSoloReturn.setBounds(267, 376, 103, 35);
 		this.add(btnSoloReturn);
-
-		JLabel txtpnWelcomeToQuizzyquiz = new JLabel();
-		txtpnWelcomeToQuizzyquiz.setText(
-				"Welcome to the VinciQuiz,\r\nEvery right answer will give you 10 points. Good Luck ! ^^");
-		txtpnWelcomeToQuizzyquiz.setBounds(132, 309, 416, 75);
-		this.add(txtpnWelcomeToQuizzyquiz);
 
 		JLabel lblNbQuestionSolo = new JLabel("Nombre de question :");
 		lblNbQuestionSolo.setFont(new Font("Tahoma", Font.PLAIN, 15));

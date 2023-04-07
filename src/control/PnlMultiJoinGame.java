@@ -34,7 +34,7 @@ public class PnlMultiJoinGame extends JPanel {
 	public PnlMultiJoinGame(Controller unController, LesGame lesParty) {
 		monController = unController;
 
-		monController.getLaConsole().setBackground("img/link 2.png");
+		monController.getLaConsole().setBackground("img/PnlMultiJoinGame/back.png");
 
 		setOpaque(false);
 
@@ -77,45 +77,38 @@ public class PnlMultiJoinGame extends JPanel {
 			}
 		});
 
-		jp.setBounds(10, 47, 658, 246);
+		jp.setBounds(10, 50, 700, 250);
 		this.add(jp);
 
-		JButton btnJoinGame = new JButton("Rejoindre");
+		ButtonDisplay btnJoinGame = new ButtonDisplay(750, 50, 250, 50,
+				"img/PnlMultiJoinGame/rejoindre_eteint.png", "img/PnlMultiJoinGame/rejoindre_allume.png");
 		btnJoinGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (!lblIdGame2.getText().equals("")) {
-					System.out.println(lblIdGame2.getText());
-
 					monController.getLaConsole().setCreateGameMulti(false);
 					monController.getLeClient().joinGame(Integer.parseInt(lblIdGame2.getText()));
-				} else {
-					System.out.println("Null");
 				}
 			}
 		});
-		btnJoinGame.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		btnJoinGame.setBounds(266, 397, 153, 46);
 		this.add(btnJoinGame);
 
-		JButton btnReloadGame = new JButton("Recharger");
+		JButton btnReloadGame = new ButtonDisplay(750, 150, 250, 50,
+				"img/PnlMultiJoinGame/recharger_eteint.png", "img/PnlMultiJoinGame/recharger_allume.png");
 		btnReloadGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				monController.getLaConsole().setReloadJoinGame(true);
 				monController.initLesGames();
 			}
 		});
-		btnReloadGame.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		btnReloadGame.setBounds(466, 397, 153, 46);
 		this.add(btnReloadGame);
 
-		JButton btnJoinReturn = new JButton("Annuler");
+		JButton btnJoinReturn = new ButtonDisplay(750, 250, 250, 50,
+				"img/PnlMultiJoinGame/retour_eteint.png", "img/PnlMultiJoinGame/retour_allume.png");
 		btnJoinReturn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				monController.PreviousPanel(monController.getLaConsole().getPnlMultiJoinGame());
 			}
 		});
-		btnJoinReturn.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		btnJoinReturn.setBounds(50, 397, 153, 46);
 		this.add(btnJoinReturn);
 
 		JLabel lblNameGame1 = new JLabel("Nom de la partie :");

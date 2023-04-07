@@ -31,7 +31,7 @@ public class PnlMultiCreateGame extends JPanel {
 	public PnlMultiCreateGame(Controller unController) {
 		monController = unController;
 
-		monController.getLaConsole().setBackground("img/link 2.png");
+		monController.getLaConsole().setBackground("img/PnlCreateGame/back.png");
 
 		setOpaque(false);
 

@@ -80,12 +80,6 @@ public class ConsoleGUI extends JFrame {
 
 		setBackground("img/PnlLogin/back.png");
 
-//		ButtonDisplay btn = new ButtonDisplay(50, 200, 500, 70, "/img/charger_eteint.png", "/img/charger_allume2.png");
-//pane.add(btn);		
-
-		// Pane pointe sur le container racine
-
-		// Fixe le Layout de la racine � Absolute
 		getContentPane().setLayout(null);
 
 		pnlLogin = new PnlLogin(monController);
