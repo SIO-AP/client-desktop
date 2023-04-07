@@ -41,6 +41,8 @@ public class TablePlayer extends JScrollPane {
 
 			if (nbQuestions > totalQuestions) {
 				question = "Fini";
+			} else if (nbQuestions == -1) {
+				question = "Déconneccté";
 			} else {
 				question = nbQuestions + "/" + totalQuestions;
 			}

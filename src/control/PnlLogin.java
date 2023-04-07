@@ -2,10 +2,12 @@ package control;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -34,7 +36,7 @@ public class PnlLogin extends JPanel {
 
 		txtName = new JTextField();
 		txtName.setBounds(30, 189, 310, 85);
-		txtName.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		txtName.setFont(new Font("Corbel", Font.BOLD, 20));
 		txtName.setOpaque(false);
 		txtName.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 		this.add(txtName);
@@ -84,7 +86,11 @@ public class PnlLogin extends JPanel {
 		// Ferme la fenêtre lors du clique sur le bouton Cancel
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				monController.getLaConsole().dispose();
+				// Créer un WindowEvent avec l'événement windowClosing
+				WindowEvent closingEvent = new WindowEvent(monController.getLaConsole(), WindowEvent.WINDOW_CLOSING);
+
+				// Dispatcher l'événement à la fenêtre
+				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(closingEvent);
 			}
 		});
 

@@ -80,8 +80,8 @@ public class PnlMultiJoinGame extends JPanel {
 		jp.setBounds(10, 50, 700, 250);
 		this.add(jp);
 
-		ButtonDisplay btnJoinGame = new ButtonDisplay(750, 50, 250, 50,
-				"img/PnlMultiJoinGame/rejoindre_eteint.png", "img/PnlMultiJoinGame/rejoindre_allume.png");
+		ButtonDisplay btnJoinGame = new ButtonDisplay(750, 50, 250, 50, "img/PnlMultiJoinGame/rejoindre_eteint.png",
+				"img/PnlMultiJoinGame/rejoindre_allume.png");
 		btnJoinGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (!lblIdGame2.getText().equals("")) {
@@ -92,8 +92,8 @@ public class PnlMultiJoinGame extends JPanel {
 		});
 		this.add(btnJoinGame);
 
-		JButton btnReloadGame = new ButtonDisplay(750, 150, 250, 50,
-				"img/PnlMultiJoinGame/recharger_eteint.png", "img/PnlMultiJoinGame/recharger_allume.png");
+		JButton btnReloadGame = new ButtonDisplay(750, 150, 250, 50, "img/PnlMultiJoinGame/recharger_eteint.png",
+				"img/PnlMultiJoinGame/recharger_allume.png");
 		btnReloadGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				monController.getLaConsole().setReloadJoinGame(true);
@@ -102,8 +102,8 @@ public class PnlMultiJoinGame extends JPanel {
 		});
 		this.add(btnReloadGame);
 
-		JButton btnJoinReturn = new ButtonDisplay(750, 250, 250, 50,
-				"img/PnlMultiJoinGame/retour_eteint.png", "img/PnlMultiJoinGame/retour_allume.png");
+		JButton btnJoinReturn = new ButtonDisplay(750, 250, 250, 50, "img/PnlMultiJoinGame/retour_eteint.png",
+				"img/PnlMultiJoinGame/retour_allume.png");
 		btnJoinReturn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				monController.PreviousPanel(monController.getLaConsole().getPnlMultiJoinGame());

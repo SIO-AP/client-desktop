@@ -30,18 +30,13 @@ public class Controller {
 
 	private MySQLAccess laBase;
 	private LesGame lesGames;
-	// specification
-	// user interact with console
 	private ConsoleGUI laConsole;
-	// implementation
-	// default constructor
-
 	private Player monPlayer;
-
-	// private QuizGame laGame;
 	private ClientWebsocket leClient;
 	private Game laGame;
 	private Jasypt theDecrypter;
+
+	private boolean isPlaying = false;
 
 	public Controller() {
 		this.theDecrypter = new Jasypt();
@@ -149,7 +144,7 @@ public class Controller {
 
 	public Boolean isCorrectThisAnswer(Question question, int idAnswer) {
 		if (question.getAnswers().get(idAnswer).getIsCorrect()) {
-			this.monPlayer.setMyScore(this.monPlayer.getMyScore() + 10);		
+			this.monPlayer.setMyScore(this.monPlayer.getMyScore() + 10);
 			return true;
 		} else {
 			return false;
@@ -199,7 +194,9 @@ public class Controller {
 
 			laConsole.getPnlSoloCreateGame().setVisible(false);
 			laConsole.remove(laConsole.getPnlSoloCreateGame());
-			laConsole.setPnlSoloCreateGame(null);
+			laConsole.setPnlSoloCreateGame(null);	
+			
+			isPlaying = true;
 
 			laConsole.lancementQuiz(nbQuestion, false);
 		}
@@ -213,7 +210,8 @@ public class Controller {
 			laConsole.getContentPane().add(laConsole.getPnlWaitingRoom());
 			laConsole.getPnlWaitingRoom().setVisible(false);
 			laConsole.getPnlWaitingRoom().setVisible(true);
-
+			
+			isPlaying = true;			
 			laConsole.setWaitingScreen(true);
 		}
 
@@ -238,20 +236,21 @@ public class Controller {
 				laConsole.getPnlWaitingRoom().setVisible(false);
 				laConsole.getPnlWaitingRoom().setVisible(true);
 
+				
+				isPlaying = true;
 				laConsole.setWaitingScreen(true);
 			}
 		}
 
-		if (object instanceof PnlResultAnswer) {		
-			
+		if (object instanceof PnlResultAnswer) {
+
 			laConsole.getPnlResultAnswer().setVisible(false);
 			laConsole.getContentPane().remove(laConsole.getPnlResultAnswer());
 			laConsole.setPnlResultAnswer(null);
 
 			laConsole.setPnlListPlayerChange(1);
-			
+
 			monPlayer.setNbQuestion(monPlayer.getNbQuestion() + 1);
-			
 
 			if (monPlayer.getNbQuestion() <= laGame.getNbQuestion()) {
 				// Question suivante
@@ -262,7 +261,7 @@ public class Controller {
 				laConsole.setPnlEndQuiz(new PnlEndQuiz(this));
 				laConsole.getContentPane().add(laConsole.getPnlEndQuiz());
 			}
-			
+
 			if (laConsole.isMulti()) {
 				leClient.getClient().sendTCP(new Message(5, laGame.getIdGame(), monPlayer));
 			}
@@ -290,7 +289,7 @@ public class Controller {
 		}
 
 		if (object instanceof PnlWaitingRoom) {
-			laConsole.setWaitingScreen(false);
+			laConsole.setWaitingScreen(false);	
 			startGameFromServer();
 
 		}
@@ -306,6 +305,7 @@ public class Controller {
 				getLaBase().finishedSoloPlayerGame(getLaGame());
 			}
 
+			isPlaying = false;
 			setLaGame(null);
 			getMonPlayer().setMyScore(0);
 			getMonPlayer().setNbQuestion(1);
@@ -426,18 +426,12 @@ public class Controller {
 		this.theDecrypter = theDecrypter;
 	}
 
-}
-
-class ImagePanel extends JComponent {
-	private Image image;
-
-	public ImagePanel(Image image) {
-		this.image = image;
+	public boolean isPlaying() {
+		return isPlaying;
 	}
 
-	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		g.drawImage(image, 0, 0, this);
+	public void setPlaying(boolean isPlaying) {
+		this.isPlaying = isPlaying;
 	}
+
 }

@@ -5,8 +5,10 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -65,7 +67,11 @@ public class PnlGameMode extends JPanel {
 				"img/PnlGameMode/quitter_allume.png");
 		btnLeave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				monController.getLaConsole().dispose();
+				// Créer un WindowEvent avec l'événement windowClosing
+				WindowEvent closingEvent = new WindowEvent(monController.getLaConsole(), WindowEvent.WINDOW_CLOSING);
+
+				// Dispatcher l'événement à la fenêtre
+				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(closingEvent);
 			}
 		});
 		this.add(btnLeave);
