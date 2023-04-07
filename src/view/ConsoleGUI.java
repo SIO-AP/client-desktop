@@ -1,13 +1,13 @@
 
 package view;
 
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,12 +15,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerDateModel;
-import javax.swing.SwingConstants;
 
 import control.PnlDisplayQuiz;
 import control.PnlEndQuiz;
@@ -33,9 +28,8 @@ import control.PnlResultAnswer;
 import control.PnlSoloCreateGame;
 import control.PnlWaitingRoom;
 import controller.Controller;
-import data.ClientWebsocket;
+import enpoints.Message;
 import model.Game;
-import model.LesGame;
 import model.Question;
 
 public class ConsoleGUI extends JFrame {
@@ -46,8 +40,6 @@ public class ConsoleGUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private Controller monController;
-
-	private Container pane;
 
 	private PnlLogin pnlLogin;
 	private PnlGameMode pnlGameMode;
@@ -62,17 +54,16 @@ public class ConsoleGUI extends JFrame {
 
 	private Question currentQuestion;
 	private int numberOfQuestion;
-	private int numCurrentQuestion;
+	// private int numCurrentQuestion;
 	private boolean multi;
 	private boolean createGameMulti;
 	private boolean reloadJoinGame = false;
 	private boolean waitingScreen = false;
-	private boolean blPnlResultAnswer = false;
-	
+	private int pnlListPlayerChange = 1; // 1 : pnlDislpayQuiz / 2 : pnlResultAnswer / 3 : pnlEndQuiz
 
-    private JLabel label;
-    private JSpinner spinner;
-    private SpinnerDateModel model;
+	public static int width = 1080;
+	public static int height = 620;
+	public static Rectangle rectangle = new Rectangle(0, 0, ConsoleGUI.width, ConsoleGUI.height);
 
 	public ConsoleGUI(Controller unController) {
 		// Appelle le constructeur de la classe mère
@@ -80,253 +71,73 @@ public class ConsoleGUI extends JFrame {
 
 		monController = unController;
 
-		// try {
-		// UIManager.setLookAndFeel(new NimbusLookAndFeel());
-		// } catch (UnsupportedLookAndFeelException e) {
-		// TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-
 		setIconImage(
 				Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("img/vinci_ico.jpg")));
-		setTitle("Vinci Quiz");
-		setSize(712, 510);
+		setTitle("The Legend of Vinci Quiz");
 		setResizable(false);
-		setFont(new Font("Consolas", Font.PLAIN, 12));
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		
-		BufferedImage myImage;
-		try {
-			myImage = ImageIO.read(getClass().getClassLoader().getResource("img/background.png"));
-		//	myImage = ImageIO.read(getClass().getClassLoader().getResource("img/image.png"));
-			setContentPane(new ImagePanel(myImage));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setSize(width, height);
 
-		// Pane pointe sur le container racine
-		pane = getContentPane();
-		
-		// Fixe le Layout de la racine � Absolute
-		pane.setLayout(null);
-		
-//		JButton btnNewButton = new JButton("New button");
-//		btnNewButton.setBounds(120, 101, 203, 109);
-//		getContentPane().add(btnNewButton);
+		setBackground("img/PnlLogin/back.png");
+
+		getContentPane().setLayout(null);
 
 		pnlLogin = new PnlLogin(monController);
-		pane.add(pnlLogin);
+		getContentPane().add(pnlLogin);
 
-//		 pnlMultiCreateGame = new PnlMultiCreateGame(unController);
-//		 pane.add(pnlMultiCreateGame);
-		
-		
-	//	HeureInput heureInput = new HeureInput();
-	//	pane.add(heureInput);
-		
-	}
+		// Ajouter un WindowListener pour écouter l'événement windowClosing
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
 
-	public void NextPanel(Object object) {
-		if (object instanceof PnlLogin) {
-			pnlLogin.setVisible(false);
-			this.remove(pnlLogin);
-			pnlLogin = null;
+				int option = JOptionPane.showOptionDialog(monController.getLaConsole(),
+						"Voulez-vous vraiment fermer l'application ?", "Confirmation", JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE, null, new Object[] { "Oui", "Non" }, "Non");
 
-			pnlGameMode = new PnlGameMode(monController);
-			pane.add(pnlGameMode);
-		}
+				if (option == JOptionPane.YES_OPTION) {
+					if (monController.isPlaying()) { // En partie
+						if (isMulti()) { // En partie multijoueur
+							System.out.println("en game multi");
+							monController.getLeClient().getClient().sendTCP(new Message(6,
+									monController.getLaGame().getIdGame(), monController.getMonPlayer()));
 
-		if (object instanceof PnlGameMode) {
-			pnlGameMode.setVisible(false);
-			this.remove(pnlGameMode);
-			pnlGameMode = null;
+						} else { // En partie solo
+							System.out.println("en game solo");
+							monController.getLaBase().finishedSoloPlayerGame(monController.getLaGame());
 
-			if (multi) {
+						}
+					} else { // Pas en partie
+						System.out.println("pas en game");
+					}
 
-				try {
-					monController.setLeClient(new ClientWebsocket(monController));
-					pnlMultiGameMode = new PnlMultiGameMode(monController);
-					pane.add(pnlMultiGameMode);
-				} catch (IOException e) {
-					// e.printStackTrace();
-					pnlGameMode = new PnlGameMode(monController);
-					pane.add(pnlGameMode);
-					JOptionPane.showMessageDialog(this,
-							"Un problème est survenue lors de la connexion au serveur.\r\nVeuillez réessayer.",
-							"Erreur de connexion", JOptionPane.ERROR_MESSAGE);
+					// Fermer la fenêtre
+					monController.getLaConsole().dispose();
 				}
-
-			} else {
-				pnlSoloCreateGame = new PnlSoloCreateGame(monController);
-				pane.add(pnlSoloCreateGame);
 			}
-
-		}
-
-		if (object instanceof PnlSoloCreateGame) {
-
-			int nbQuestion = (int) pnlSoloCreateGame.getListeNbQuestion().getSelectedItem();
-
-			pnlSoloCreateGame.setVisible(false);
-			this.remove(pnlSoloCreateGame);
-			pnlSoloCreateGame = null;
-
-			lancementQuiz(nbQuestion, false);
-		}
-
-		if (object instanceof PnlMultiCreateGame) {
-			pnlMultiCreateGame.setVisible(false);
-			this.remove(pnlMultiCreateGame);
-			pnlMultiCreateGame = null;
-
-			pnlWaitingRoom = new PnlWaitingRoom(monController);
-			pane.add(pnlWaitingRoom);
-			pnlWaitingRoom.setVisible(false);
-			pnlWaitingRoom.setVisible(true);
-
-			waitingScreen = true;
-		}
-
-		if (object instanceof PnlMultiJoinGame) {
-			pnlMultiJoinGame.setVisible(false);
-			this.remove(pnlMultiJoinGame);
-			pnlMultiJoinGame = null;
-
-			if (reloadJoinGame) {
-
-				LesGame lesParty = monController.getLesGames();
-
-				pnlMultiJoinGame = new PnlMultiJoinGame(monController, lesParty);
-				pane.add(pnlMultiJoinGame);
-				pnlMultiJoinGame.setVisible(false);
-				pnlMultiJoinGame.setVisible(true);
-
-				reloadJoinGame = false;
-			} else {
-				pnlWaitingRoom = new PnlWaitingRoom(monController);
-				pane.add(pnlWaitingRoom);
-				pnlWaitingRoom.setVisible(false);
-				pnlWaitingRoom.setVisible(true);
-
-				waitingScreen = true;
-			}
-		}
-
-		if (object instanceof PnlResultAnswer) {
-			pnlResultAnswer.setVisible(false);
-			pane.remove(pnlResultAnswer);
-			pnlResultAnswer = null;
-
-			blPnlResultAnswer = false;
-
-			if (numCurrentQuestion <= numberOfQuestion) {
-				// Question suivante
-				nextQuestion();
-			} else {
-				// Fin du Quiz
-				pnlEndQuiz = new PnlEndQuiz(monController);
-				pane.add(pnlEndQuiz);
-			}
-		}
-
-		if (object instanceof PnlMultiGameMode) {
-			Boolean createGame = pnlMultiGameMode.getCreateGame();
-
-			pnlMultiGameMode.setVisible(false);
-			pane.remove(pnlMultiGameMode);
-			pnlMultiGameMode = null;
-
-			if (createGame) {
-				pnlMultiCreateGame = new PnlMultiCreateGame(monController);
-				pane.add(pnlMultiCreateGame);
-
-			} else {
-				LesGame lesParty = monController.getLesGames();
-
-				pnlMultiJoinGame = new PnlMultiJoinGame(monController, lesParty);
-				pane.add(pnlMultiJoinGame);
-				pnlMultiJoinGame.setVisible(false);
-				pnlMultiJoinGame.setVisible(true);
-			}
-		}
-
-		if (object instanceof PnlWaitingRoom) {
-			waitingScreen = false;
-			monController.startGameFromServer();
-
-		}
-		
-		if (object instanceof PnlEndQuiz) {
-			pnlEndQuiz.setVisible(false);
-			pane.remove(pnlEndQuiz);
-			pnlEndQuiz = null;
-			
-			monController.setLaGame(null);
-			monController.getMonPlayer().setMyScore(0);
-			
-			pnlGameMode = new PnlGameMode(monController);
-			pane.add(pnlGameMode);
-		}
-	}
-
-	public void PreviousPanel(Object object) {
-		if (object instanceof PnlSoloCreateGame) {
-			pnlSoloCreateGame.setVisible(false);
-			this.remove(pnlSoloCreateGame);
-			pnlSoloCreateGame = null;
-
-			pnlGameMode = new PnlGameMode(monController);
-			pane.add(pnlGameMode);
-		}
-
-		if (object instanceof PnlMultiGameMode) {
-			pnlMultiGameMode.setVisible(false);
-			this.remove(pnlMultiGameMode);
-			pnlMultiGameMode = null;
-			
-			monController.getLeClient().getClient().close();
-
-			pnlGameMode = new PnlGameMode(monController);
-			pane.add(pnlGameMode);
-		}
-
-		if (object instanceof PnlMultiCreateGame) {
-			pnlMultiCreateGame.setVisible(false);
-			this.remove(pnlMultiCreateGame);
-			pnlMultiCreateGame = null;
-
-			pnlMultiGameMode = new PnlMultiGameMode(monController);
-			pane.add(pnlMultiGameMode);
-		}
-
-		if (object instanceof PnlMultiJoinGame) {
-			reloadJoinGame = false;
-			pnlMultiJoinGame.setVisible(false);
-			this.remove(pnlMultiJoinGame);
-			pnlMultiJoinGame = null;
-
-			pnlMultiGameMode = new PnlMultiGameMode(monController);
-			pane.add(pnlMultiGameMode);
-		}
+		});
 
 	}
 
-	private void startSoloMode() {
+	private void startSoloPlayerMode() {
 		try {
-			ArrayList<Question> quizQuestions;
-			ArrayList<Integer> listeIdQuestion = monController.listeIdQuestion(numberOfQuestion);
-			quizQuestions = monController.getLaBase().getQuestions(listeIdQuestion);
-			monController.setLaGame(
-					new Game(0, "solo", monController.getMonPlayer().getMyId(), null, quizQuestions, numberOfQuestion));
+			ArrayList<Question> questions;
 
-			currentQuestion = monController.getLaGame().getGroupQuestions().get(numCurrentQuestion - 1);
+			questions = monController.getLaBase().getQuestions(numberOfQuestion);
+
+			monController.setLaGame(new Game(0, "Solo", monController.getMonPlayer().getMyId(), null, questions,
+					numberOfQuestion, null));
+
+			monController.setLaGame(monController.getLaBase().createSoloPlayerGame(monController.getLaGame()));
+
+			currentQuestion = monController.getLaGame().getGroupQuestions()
+					.get(monController.getMonPlayer().getNbQuestion() - 1);
 
 			pnlDisplayQuiz = new PnlDisplayQuiz(monController, currentQuestion);
-			pane.add(pnlDisplayQuiz);
+			getContentPane().add(pnlDisplayQuiz);
 
-			numCurrentQuestion++;
+			// monController.getMonPlayer().setNbQuestion(monController.getMonPlayer().getNbQuestion()
+			// + 1);
+			// numCurrentQuestion++;
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
@@ -334,25 +145,29 @@ public class ConsoleGUI extends JFrame {
 
 	private void startMultiplayerMode() {
 		// Selectionne la question en cours
-		currentQuestion = monController.getLaGame().getGroupQuestions().get(numCurrentQuestion - 1);
+		currentQuestion = monController.getLaGame().getGroupQuestions()
+				.get(monController.getMonPlayer().getNbQuestion() - 1);
 		// Changement de panel
 		pnlDisplayQuiz = new PnlDisplayQuiz(monController, currentQuestion);
-		pane.add(pnlDisplayQuiz);
+		getContentPane().add(pnlDisplayQuiz);
 
 		pnlDisplayQuiz.setVisible(false);
 		pnlDisplayQuiz.setVisible(true);
 
-		numCurrentQuestion++;
+		// monController.getMonPlayer().setNbQuestion(monController.getMonPlayer().getNbQuestion()
+		// + 1);
+		// numCurrentQuestion++;
 	}
 
 	public void lancementQuiz(int nbQuestion, Boolean multiplayer) {
 		numberOfQuestion = nbQuestion;
-		numCurrentQuestion = 1;
+		// monController.getMonPlayer().setNbQuestion(1);
+		// numCurrentQuestion = 1;
 
 		if (multiplayer) {
 			startMultiplayerMode();
 		} else {
-			startSoloMode();
+			startSoloPlayerMode();
 		}
 
 	}
@@ -360,13 +175,13 @@ public class ConsoleGUI extends JFrame {
 	public void questionTreatment(int bgSelected) {
 		// Changement de panel
 		pnlDisplayQuiz.setVisible(false);
-		pane.remove(pnlDisplayQuiz);
+		getContentPane().remove(pnlDisplayQuiz);
 		pnlDisplayQuiz = null;
 
-		blPnlResultAnswer = true;
+		pnlListPlayerChange = 2;
 
 		pnlResultAnswer = new PnlResultAnswer(monController);
-		pane.add(pnlResultAnswer);
+		getContentPane().add(pnlResultAnswer);
 
 		if (monController.isCorrectThisAnswer(currentQuestion, bgSelected)) {
 			// Affiche que la réponse est correcte
@@ -378,15 +193,30 @@ public class ConsoleGUI extends JFrame {
 
 	}
 
-	private void nextQuestion() {
+	public void nextQuestion() {
 		// Selectionne la question en cours
-		currentQuestion = monController.getLaGame().getGroupQuestions().get(numCurrentQuestion - 1);
+		currentQuestion = monController.getLaGame().getGroupQuestions()
+				.get(monController.getMonPlayer().getNbQuestion() - 1);
 
 		// Changement de panel
 		pnlDisplayQuiz = new PnlDisplayQuiz(monController, currentQuestion);
-		pane.add(pnlDisplayQuiz);
+		getContentPane().add(pnlDisplayQuiz);
+		// monController.getMonPlayer().setNbQuestion(monController.getMonPlayer().getNbQuestion()
+		// + 1);
+		// numCurrentQuestion++;
+	}
 
-		numCurrentQuestion++;
+	public void setBackground(String path) {
+		try {
+			BufferedImage myImage = ImageIO.read(getClass().getClassLoader().getResource(path));
+			Image resizedImage = myImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+			ImagePanel imagePanel = new ImagePanel(resizedImage);
+			imagePanel.setPreferredSize(new Dimension(width, height)); // définir la taille préférée de l'image
+			setContentPane(imagePanel);
+			pack(); // ajuster la taille de la frame en fonction de la taille préférée de l'image
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private String resultMessageScore(int score, int numberOfQuestion) {
@@ -431,21 +261,21 @@ public class ConsoleGUI extends JFrame {
 		this.multi = multi;
 	}
 
-	public int getNumberOfQuestion() {
-		return numberOfQuestion;
-	}
+//	public int getNumberOfQuestion() {
+//		return numberOfQuestion;
+//	}
+//
+//	public void setNumberOfQuestion(int numberOfQuestion) {
+//		this.numberOfQuestion = numberOfQuestion;
+//	}
 
-	public void setNumberOfQuestion(int numberOfQuestion) {
-		this.numberOfQuestion = numberOfQuestion;
-	}
-
-	public int getNumCurrentQuestion() {
-		return numCurrentQuestion;
-	}
-
-	public void setNumCurrentQuestion(int numCurrentQuestion) {
-		this.numCurrentQuestion = numCurrentQuestion;
-	}
+//	public int getNumCurrentQuestion() {
+//		return numCurrentQuestion;
+//	}
+//
+//	public void setNumCurrentQuestion(int numCurrentQuestion) {
+//		this.numCurrentQuestion = numCurrentQuestion;
+//	}
 
 	public PnlGameMode getPnlGameMode() {
 		return pnlGameMode;
@@ -455,7 +285,7 @@ public class ConsoleGUI extends JFrame {
 		this.pnlGameMode = pnlGameMode;
 	}
 
-	public JPanel getPnlMultiGameMode() {
+	public PnlMultiGameMode getPnlMultiGameMode() {
 		return pnlMultiGameMode;
 	}
 
@@ -519,14 +349,6 @@ public class ConsoleGUI extends JFrame {
 		this.createGameMulti = createGameMulti;
 	}
 
-	public Container getPane() {
-		return pane;
-	}
-
-	public void setPane(Container pane) {
-		this.pane = pane;
-	}
-
 	public boolean isReloadJoinGame() {
 		return reloadJoinGame;
 	}
@@ -543,14 +365,6 @@ public class ConsoleGUI extends JFrame {
 		this.waitingScreen = waitingScreen;
 	}
 
-	public boolean isBlPnlResultAnswer() {
-		return blPnlResultAnswer;
-	}
-
-	public void setBlPnlResultAnswer(boolean blPnlResultAnswer) {
-		this.blPnlResultAnswer = blPnlResultAnswer;
-	}
-
 	public Question getCurrentQuestion() {
 		return currentQuestion;
 	}
@@ -558,52 +372,26 @@ public class ConsoleGUI extends JFrame {
 	public void setCurrentQuestion(Question currentQuestion) {
 		this.currentQuestion = currentQuestion;
 	}
+
+	public int getPnlListPlayerChange() {
+		return pnlListPlayerChange;
+	}
+
+	public void setPnlListPlayerChange(int pnlListPlayerChange) {
+		this.pnlListPlayerChange = pnlListPlayerChange;
+	}
 }
 
 class ImagePanel extends JComponent {
-    private Image image;
-    public ImagePanel(Image image) {
-        this.image = image;
-    }
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.drawImage(image, 0, 0, this);
-    }
-}
+	private Image image;
 
-class HeureInput extends JPanel {
-    private JLabel label;
-    private JSpinner spinner;
-    private SpinnerDateModel model;
+	public ImagePanel(Image image) {
+		this.image = image;
+	}
 
-    public HeureInput() {
-        label = new JLabel("Heure : ");
-        model = new SpinnerDateModel();
-        spinner = new JSpinner(model);
-
-        // Configuration de la zone de saisie
-        JSpinner.DateEditor editor = new JSpinner.DateEditor(spinner, "HH:mm:ss");
-        editor.getTextField().setEditable(false); // permettre la saisie manuelle
-        spinner.setEditor(editor);
-        spinner.setPreferredSize(new Dimension(150, 48));
-        Font font = spinner.getFont();
-        spinner.setFont(new Font(font.getName(), font.getStyle(), 20)); // taille de police de 20 points
-
-        // Centrage de l'heure dans le spinner
-        JSpinner.DefaultEditor spinnerEditor = (JSpinner.DefaultEditor) spinner.getEditor();
-        spinnerEditor.getTextField().setHorizontalAlignment(SwingConstants.CENTER);
-
-        
-        // Ajout des éléments à la fenêtre
-        setLayout(new FlowLayout());
-        add(label);
-        add(spinner);
-        setBounds(0, 0, 400, 400);
-    }
-
-    // Méthode pour récupérer l'heure saisie
-    public String getHeure() {
-        return model.getValue().toString();
-    }
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(image, 0, 0, this);
+	}
 }

@@ -2,12 +2,14 @@ package control;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 
-import javax.swing.JButton;
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -15,6 +17,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import controller.Controller;
+import view.ConsoleGUI;
 
 public class PnlLogin extends JPanel {
 	private Controller monController;
@@ -25,39 +28,32 @@ public class PnlLogin extends JPanel {
 
 	public PnlLogin(Controller unController) {
 		monController = unController;
-		
+
 		setOpaque(false);
-		
+
+		this.setBounds(ConsoleGUI.rectangle);
 		this.setLayout(null);
-		this.setBounds(10, 10, 678, 453);
-
-		JLabel lblPassword = new JLabel("Password :");
-		lblPassword.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblPassword.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblPassword.setBounds(203, 190, 85, 19);
-		this.add(lblPassword);
-
-		passwordField = new JPasswordField();
-		passwordField.setBounds(340, 184, 153, 33);
-		this.add(passwordField);
-		passwordField.setColumns(10);
-
-		JButton btnLogin = new JButton("Login");
-		btnLogin.setBounds(377, 289, 116, 33);
-		btnLogin.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		this.add(btnLogin);
-
-		JLabel lblName = new JLabel("Name :");
-		lblName.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblName.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblName.setBounds(203, 139, 85, 19);
-		this.add(lblName);
 
 		txtName = new JTextField();
-		txtName.setBounds(340, 130, 153, 33);
+		txtName.setBounds(30, 189, 310, 85);
+		txtName.setFont(new Font("Corbel", Font.BOLD, 20));
+		txtName.setOpaque(false);
+		txtName.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 		this.add(txtName);
 		txtName.setColumns(10);
 
+		passwordField = new JPasswordField();
+		passwordField.setBounds(30, 328, 310, 85);
+		passwordField.setBorder(null);
+		passwordField.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		passwordField.setOpaque(false);
+		passwordField.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+		this.add(passwordField);
+		passwordField.setColumns(10);
+
+		ButtonDisplay btnLogin = new ButtonDisplay(50, 450, 250, 50, "img/PnlLogin/connexion_eteint.png", "img/PnlLogin/connexion_allume.png");
+		this.add(btnLogin);
+		
 		lblConnectionFasle = new JLabel("Nom ou Mot de passe incorecte !");
 		lblConnectionFasle.setForeground(Color.RED);
 		lblConnectionFasle.setHorizontalAlignment(SwingConstants.CENTER);
@@ -65,9 +61,7 @@ public class PnlLogin extends JPanel {
 		lblConnectionFasle.setBounds(10, 260, 658, 19);
 		this.add(lblConnectionFasle);
 
-		JButton btnCancel = new JButton("Cancel");
-		btnCancel.setBounds(209, 289, 116, 33);
-		btnCancel.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		ButtonDisplay btnCancel = new ButtonDisplay(50, 530, 250, 50, "img/PnlLogin/quitter_eteint.png", "img/PnlLogin/quitter_allume.png");
 		this.add(btnCancel);
 
 		// Lance la vérification du mot de passe lors du clique sur le bouton de
@@ -92,7 +86,11 @@ public class PnlLogin extends JPanel {
 		// Ferme la fenêtre lors du clique sur le bouton Cancel
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				monController.getLaConsole().dispose();
+				// Créer un WindowEvent avec l'événement windowClosing
+				WindowEvent closingEvent = new WindowEvent(monController.getLaConsole(), WindowEvent.WINDOW_CLOSING);
+
+				// Dispatcher l'événement à la fenêtre
+				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(closingEvent);
 			}
 		});
 
@@ -101,12 +99,11 @@ public class PnlLogin extends JPanel {
 	private void login() {
 		try {
 			if (monController.verification(txtName.getText(), String.valueOf(passwordField.getPassword()))) {
-				monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlLogin());
-			}
-			else {
+				monController.NextPanel(monController.getLaConsole().getPnlLogin());
+			} else {
 				lblConnectionFasle.setVisible(true);
 				passwordField.setText("");
-			//	passwordField.focus
+				// passwordField.focus
 			}
 		} catch (Exception e1) {
 			e1.printStackTrace();

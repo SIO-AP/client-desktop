@@ -1,22 +1,27 @@
 package controller;
 
-import java.io.FileNotFoundException;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Random;
 
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.UnsupportedLookAndFeelException;
 
+import control.PnlEndQuiz;
+import control.PnlGameMode;
+import control.PnlLogin;
+import control.PnlMultiCreateGame;
+import control.PnlMultiGameMode;
+import control.PnlMultiJoinGame;
+import control.PnlResultAnswer;
+import control.PnlSoloCreateGame;
 import control.PnlWaitingRoom;
 import control.TablePlayer;
 import data.ClientWebsocket;
 import data.MySQLAccess;
 import enpoints.Message;
-import model.LesGame;
 import model.Game;
+import model.LesGame;
 import model.Player;
 import model.Question;
 import view.ConsoleGUI;
@@ -25,18 +30,13 @@ public class Controller {
 
 	private MySQLAccess laBase;
 	private LesGame lesGames;
-	// specification
-	// user interact with console
 	private ConsoleGUI laConsole;
-	// implementation
-	// default constructor
-
 	private Player monPlayer;
-
-	// private QuizGame laGame;
 	private ClientWebsocket leClient;
 	private Game laGame;
 	private Jasypt theDecrypter;
+
+	private boolean isPlaying = false;
 
 	public Controller() {
 		this.theDecrypter = new Jasypt();
@@ -44,7 +44,6 @@ public class Controller {
 		this.laConsole = new ConsoleGUI(this);
 		this.laConsole.setVisible(true);
 		this.laConsole.setLocationRelativeTo(null);
-
 	}
 
 	public void selectOption(Message message) {
@@ -52,7 +51,7 @@ public class Controller {
 			startGame();
 		} else if (message.getOption() == 3) { // Impossible de rejoindre la game
 			joinGameInpossible();
-		} else if (message.getOption() == 4) {
+		} else if (message.getOption() == 4) { // Mise à jour des scores
 			setListPlayerGame(message);
 		}
 
@@ -64,31 +63,55 @@ public class Controller {
 			try {
 				laConsole.getPnlWaitingRoom().getTablePlayer().setVisible(false);
 				laConsole.getPnlWaitingRoom().remove(laConsole.getPnlWaitingRoom().getTablePlayer());
-				laConsole.getPnlWaitingRoom().setTablePlayer(new TablePlayer(this, 10, 47, 658, 246));
+				laConsole.getPnlWaitingRoom().setTablePlayer(new TablePlayer(this, 10, 47, 658, 246, false));
 				laConsole.getPnlWaitingRoom().add(laConsole.getPnlWaitingRoom().getTablePlayer());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else {
-			if (laConsole.isBlPnlResultAnswer()) {
-				try {
-					laConsole.getPnlResultAnswer().getTablePlayer().setVisible(false);
-					laConsole.getPnlResultAnswer().remove(laConsole.getPnlResultAnswer().getTablePlayer());
-					laConsole.getPnlResultAnswer().setTablePlayer(new TablePlayer(this, 139, 290, 400, 150));
-					laConsole.getPnlResultAnswer().add(laConsole.getPnlResultAnswer().getTablePlayer());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else {
+			int i = laConsole.getPnlListPlayerChange();
+			switch (i) {
+			case 1: {
 				try {
 					laConsole.getPnlDisplayQuiz().getTablePlayer().setVisible(false);
 					laConsole.getPnlDisplayQuiz().remove(laConsole.getPnlDisplayQuiz().getTablePlayer());
-					laConsole.getPnlDisplayQuiz().setTablePlayer(new TablePlayer(this, 257, 330, 400, 100));
+					laConsole.getPnlDisplayQuiz().setTablePlayer(new TablePlayer(this, 257, 330, 400, 100, true));
 					laConsole.getPnlDisplayQuiz().add(laConsole.getPnlDisplayQuiz().getTablePlayer());
+					break;
 				} catch (Exception e) {
 					e.printStackTrace();
+					break;
 				}
 			}
+			case 2: {
+				try {
+					laConsole.getPnlResultAnswer().getTablePlayer().setVisible(false);
+					laConsole.getPnlResultAnswer().remove(laConsole.getPnlResultAnswer().getTablePlayer());
+					laConsole.getPnlResultAnswer().setTablePlayer(new TablePlayer(this, 139, 290, 400, 150, true));
+					laConsole.getPnlResultAnswer().add(laConsole.getPnlResultAnswer().getTablePlayer());
+					break;
+				} catch (Exception e) {
+					e.printStackTrace();
+					break;
+				}
+
+			}
+			case 3: {
+				try {
+					laConsole.getPnlEndQuiz().getTablePlayer().setVisible(false);
+					laConsole.getPnlEndQuiz().remove(laConsole.getPnlEndQuiz().getTablePlayer());
+					laConsole.getPnlEndQuiz().setTablePlayer(new TablePlayer(this, 257, 330, 400, 100, true));
+					laConsole.getPnlEndQuiz().add(laConsole.getPnlEndQuiz().getTablePlayer());
+					break;
+				} catch (Exception e) {
+					e.printStackTrace();
+					break;
+				}
+			}
+			default:
+
+			}
+
 		}
 
 	}
@@ -106,7 +129,7 @@ public class Controller {
 
 	private void startGame() {
 		laConsole.getPnlWaitingRoom().setVisible(false);
-		laConsole.getPane().remove(laConsole.getPnlWaitingRoom());
+		laConsole.getContentPane().remove(laConsole.getPnlWaitingRoom());
 		laConsole.setPnlWaitingRoom(null);
 
 		laConsole.setWaitingScreen(false);
@@ -122,39 +145,225 @@ public class Controller {
 	public Boolean isCorrectThisAnswer(Question question, int idAnswer) {
 		if (question.getAnswers().get(idAnswer).getIsCorrect()) {
 			this.monPlayer.setMyScore(this.monPlayer.getMyScore() + 10);
-			if (laConsole.isMulti()) {
-				leClient.getClient().sendTCP(new Message(5, laGame.getIdGame(), monPlayer));
-			}
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public ArrayList<Integer> listeIdQuestion(int maxQuestions)
-			throws FileNotFoundException, ClassNotFoundException, IOException, SQLException {
+	public void NextPanel(Object object) {
+		if (object instanceof PnlLogin) {
+			laConsole.getPnlLogin().setVisible(false);
+			laConsole.remove(laConsole.getPnlLogin());
+			laConsole.setPnlLogin(null);
 
-		ArrayList<Integer> listeIdQuestion = new ArrayList<Integer>();
-		int nombreTotalQuestion = laBase.nombreTotalQuestion();
+			laConsole.setPnlGameMode(new PnlGameMode(this));
+			laConsole.getContentPane().add(laConsole.getPnlGameMode());
+		}
 
-		for (int i = 0; i < maxQuestions; i++) {
-			int idRandom = generateQuestionId(nombreTotalQuestion);
+		if (object instanceof PnlGameMode) {
+			laConsole.getPnlGameMode().setVisible(false);
+			laConsole.remove(laConsole.getPnlGameMode());
+			laConsole.setPnlGameMode(null);
 
-			if (listeIdQuestion.contains(idRandom)) {
-				while (listeIdQuestion.contains(idRandom)) {
-					idRandom = generateQuestionId(nombreTotalQuestion);
+			if (laConsole.isMulti()) {
+
+				try {
+					setLeClient(new ClientWebsocket(this));
+					laConsole.setPnlMultiGameMode(new PnlMultiGameMode(this));
+					laConsole.getContentPane().add(laConsole.getPnlMultiGameMode());
+				} catch (IOException e) {
+					// e.printStackTrace();
+					laConsole.setPnlGameMode(new PnlGameMode(this));
+					laConsole.getContentPane().add(laConsole.getPnlGameMode());
+					JOptionPane.showMessageDialog(laConsole,
+							"Un problème est survenue lors de la connexion au serveur.\r\nVeuillez réessayer.",
+							"Erreur de connexion", JOptionPane.ERROR_MESSAGE);
 				}
-				listeIdQuestion.add(idRandom);
+
 			} else {
-				listeIdQuestion.add(idRandom);
+				laConsole.setPnlSoloCreateGame(new PnlSoloCreateGame(this));
+				laConsole.getContentPane().add(laConsole.getPnlSoloCreateGame());
+			}
+
+		}
+
+		if (object instanceof PnlSoloCreateGame) {
+
+			int nbQuestion = (int) laConsole.getPnlSoloCreateGame().getListeNbQuestion().getSelectedItem();
+
+			laConsole.getPnlSoloCreateGame().setVisible(false);
+			laConsole.remove(laConsole.getPnlSoloCreateGame());
+			laConsole.setPnlSoloCreateGame(null);	
+			
+			isPlaying = true;
+
+			laConsole.lancementQuiz(nbQuestion, false);
+		}
+
+		if (object instanceof PnlMultiCreateGame) {
+			laConsole.getPnlMultiCreateGame().setVisible(false);
+			laConsole.remove(laConsole.getPnlMultiCreateGame());
+			laConsole.setPnlMultiCreateGame(null);
+
+			laConsole.setPnlWaitingRoom(new PnlWaitingRoom(this));
+			laConsole.getContentPane().add(laConsole.getPnlWaitingRoom());
+			laConsole.getPnlWaitingRoom().setVisible(false);
+			laConsole.getPnlWaitingRoom().setVisible(true);
+			
+			isPlaying = true;			
+			laConsole.setWaitingScreen(true);
+		}
+
+		if (object instanceof PnlMultiJoinGame) {
+			laConsole.getPnlMultiJoinGame().setVisible(false);
+			laConsole.remove(laConsole.getPnlMultiJoinGame());
+			laConsole.setPnlMultiJoinGame(null);
+
+			if (laConsole.isReloadJoinGame()) {
+
+				LesGame lesParty = getLesGames();
+
+				laConsole.setPnlMultiJoinGame(new PnlMultiJoinGame(this, lesParty));
+				laConsole.getContentPane().add(laConsole.getPnlMultiJoinGame());
+				laConsole.getPnlMultiJoinGame().setVisible(false);
+				laConsole.getPnlMultiJoinGame().setVisible(true);
+
+				laConsole.setReloadJoinGame(false);
+			} else {
+				laConsole.setPnlWaitingRoom(new PnlWaitingRoom(this));
+				laConsole.getContentPane().add(laConsole.getPnlWaitingRoom());
+				laConsole.getPnlWaitingRoom().setVisible(false);
+				laConsole.getPnlWaitingRoom().setVisible(true);
+
+				
+				isPlaying = true;
+				laConsole.setWaitingScreen(true);
 			}
 		}
-		return listeIdQuestion;
+
+		if (object instanceof PnlResultAnswer) {
+
+			laConsole.getPnlResultAnswer().setVisible(false);
+			laConsole.getContentPane().remove(laConsole.getPnlResultAnswer());
+			laConsole.setPnlResultAnswer(null);
+
+			laConsole.setPnlListPlayerChange(1);
+
+			monPlayer.setNbQuestion(monPlayer.getNbQuestion() + 1);
+
+			if (monPlayer.getNbQuestion() <= laGame.getNbQuestion()) {
+				// Question suivante
+				laConsole.nextQuestion();
+			} else {
+				// Fin du Quiz
+				laConsole.setPnlListPlayerChange(3);
+				laConsole.setPnlEndQuiz(new PnlEndQuiz(this));
+				laConsole.getContentPane().add(laConsole.getPnlEndQuiz());
+			}
+
+			if (laConsole.isMulti()) {
+				leClient.getClient().sendTCP(new Message(5, laGame.getIdGame(), monPlayer));
+			}
+		}
+
+		if (object instanceof PnlMultiGameMode) {
+			Boolean createGame = laConsole.getPnlMultiGameMode().isCreateGame();
+
+			laConsole.getPnlMultiGameMode().setVisible(false);
+			laConsole.getContentPane().remove(laConsole.getPnlMultiGameMode());
+			laConsole.setPnlMultiGameMode(null);
+
+			if (createGame) {
+				laConsole.setPnlMultiCreateGame(new PnlMultiCreateGame(this));
+				laConsole.getContentPane().add(laConsole.getPnlMultiCreateGame());
+
+			} else {
+				LesGame lesParty = getLesGames();
+
+				laConsole.setPnlMultiJoinGame(new PnlMultiJoinGame(this, lesParty));
+				laConsole.getContentPane().add(laConsole.getPnlMultiJoinGame());
+				laConsole.getPnlMultiJoinGame().setVisible(false);
+				laConsole.getPnlMultiJoinGame().setVisible(true);
+			}
+		}
+
+		if (object instanceof PnlWaitingRoom) {
+			laConsole.setWaitingScreen(false);	
+			startGameFromServer();
+
+		}
+
+		if (object instanceof PnlEndQuiz) {
+			laConsole.getPnlEndQuiz().setVisible(false);
+			laConsole.getContentPane().remove(laConsole.getPnlEndQuiz());
+			laConsole.setPnlEndQuiz(null);
+
+			if (laConsole.isMulti()) {
+				getLeClient().getClient().close();
+			} else {
+				getLaBase().finishedSoloPlayerGame(getLaGame());
+			}
+
+			isPlaying = false;
+			setLaGame(null);
+			getMonPlayer().setMyScore(0);
+			getMonPlayer().setNbQuestion(1);
+
+			laConsole.setPnlGameMode(new PnlGameMode(this));
+			laConsole.getContentPane().add(laConsole.getPnlGameMode());
+		}
 	}
 
-	public int generateQuestionId(int nombreTotalQuestion) {
-		int randomNumber = new Random().nextInt(nombreTotalQuestion + 0);
-		return randomNumber;
+	public void PreviousPanel(Object object) {
+		if (object instanceof PnlSoloCreateGame) {
+			laConsole.getPnlSoloCreateGame().setVisible(false);
+			laConsole.remove(laConsole.getPnlSoloCreateGame());
+			laConsole.setPnlSoloCreateGame(null);
+
+			laConsole.setPnlGameMode(new PnlGameMode(this));
+			laConsole.getContentPane().add(laConsole.getPnlGameMode());
+		}
+
+		if (object instanceof PnlMultiGameMode) {
+			laConsole.getPnlMultiGameMode().setVisible(false);
+			laConsole.remove(laConsole.getPnlMultiGameMode());
+			laConsole.setPnlMultiGameMode(null);
+
+			leClient.getClient().close();
+
+			laConsole.setPnlGameMode(new PnlGameMode(this));
+			laConsole.getContentPane().add(laConsole.getPnlGameMode());
+		}
+
+		if (object instanceof PnlMultiCreateGame) {
+			laConsole.getPnlMultiCreateGame().setVisible(false);
+			laConsole.remove(laConsole.getPnlMultiCreateGame());
+			laConsole.setPnlMultiCreateGame(null);
+
+			laConsole.setPnlMultiGameMode(new PnlMultiGameMode(this));
+			laConsole.getContentPane().add(laConsole.getPnlMultiGameMode());
+		}
+
+		if (object instanceof PnlMultiJoinGame) {
+			laConsole.setReloadJoinGame(false);
+			laConsole.getPnlMultiJoinGame().setVisible(false);
+			laConsole.remove(laConsole.getPnlMultiJoinGame());
+			laConsole.setPnlMultiJoinGame(null);
+
+			laConsole.setPnlMultiGameMode(new PnlMultiGameMode(this));
+			laConsole.getContentPane().add(laConsole.getPnlMultiGameMode());
+		}
+
+	}
+
+	public boolean verification(String name, String password) {
+		int idPlayer = laBase.verifLogin(name, password);
+		if (idPlayer != 0) {
+			this.monPlayer = new Player(idPlayer, name, 0, 1);
+			return true;
+		}
+		return false;
 	}
 
 	public void initLesGames() {
@@ -193,15 +402,6 @@ public class Controller {
 		this.monPlayer = monPlayer;
 	}
 
-	public boolean verification(String name, String password) {
-		int idPlayer = laBase.verifLogin(name, password);
-		if (idPlayer != 0) {
-			this.monPlayer = new Player(idPlayer, name, 0);
-			return true;
-		}
-		return false;
-	}
-
 	public ClientWebsocket getLeClient() {
 		return leClient;
 	}
@@ -224,6 +424,14 @@ public class Controller {
 
 	public void setTheDecrypter(Jasypt theDecrypter) {
 		this.theDecrypter = theDecrypter;
+	}
+
+	public boolean isPlaying() {
+		return isPlaying;
+	}
+
+	public void setPlaying(boolean isPlaying) {
+		this.isPlaying = isPlaying;
 	}
 
 }

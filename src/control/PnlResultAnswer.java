@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import controller.Controller;
+import view.ConsoleGUI;
 
 public class PnlResultAnswer extends JPanel {
 
@@ -19,14 +20,18 @@ public class PnlResultAnswer extends JPanel {
 
 	public PnlResultAnswer(Controller unController) {
 		monController = unController;
+
+		monController.getLaConsole().setBackground("img/link 2.png");
+
 		setOpaque(false);
-		this.setBounds(10, 10, 678, 453);
+
+		this.setBounds(ConsoleGUI.rectangle);
 		this.setLayout(null);
 
 		JButton btnNextQuestion = new JButton();
 		btnNextQuestion.setBounds(264, 200, 150, 30);
 		btnNextQuestion.setFont(new Font("Tahoma", Font.PLAIN, 13));		
-		if (monController.getLaConsole().getNumCurrentQuestion() <= monController.getLaConsole().getNumberOfQuestion()) {
+		if (monController.getMonPlayer().getNbQuestion() <= monController.getLaGame().getNbQuestion()) {
 			// Question suivante
 			btnNextQuestion.setText("Question suivante");
 		} else {
@@ -37,7 +42,7 @@ public class PnlResultAnswer extends JPanel {
 
 		btnNextQuestion.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				monController.getLaConsole().NextPanel(monController.getLaConsole().getPnlResultAnswer());
+				monController.NextPanel(monController.getLaConsole().getPnlResultAnswer());
 			}
 		});
 
@@ -47,7 +52,7 @@ public class PnlResultAnswer extends JPanel {
 		this.add(lblAnswer);
 		
 		if (monController.getLaConsole().isMulti()) {
-			tablePlayer = new TablePlayer(monController, 139, 290, 400, 150);
+			tablePlayer = new TablePlayer(monController, 139, 290, 400, 150, true);
 			this.add(tablePlayer);
 		}
 

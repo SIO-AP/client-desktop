@@ -1,13 +1,13 @@
 package control;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Component;
 import java.util.ArrayList;
 
-import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 
 import controller.Controller;
@@ -18,20 +18,44 @@ public class TablePlayer extends JScrollPane {
 	private String[][] datas;
 	private JTable table;
 
-	public TablePlayer(Controller unController, int x, int y, int w, int h) {
+	public TablePlayer(Controller unController, int x, int y, int w, int h, boolean displayNbQuestion) {
 		monController = unController;
 
 		this.datas = new String[monController.getLaGame().getPlayerList().size()][];
-		int i = 0;
-		for (Player player : monController.getLaGame().getPlayerList()) {
-			String s[] = { player.getMyName(), Integer.toString(player.getMyScore()) };
-			datas[i] = s;
-			i++;
+
+		for (int i = 0; i < datas.length; i++) {
+			Player player = monController.getLaGame().getPlayerList().get(i);
+			String name = (player.getMyId() == monController.getMonPlayer().getMyId())
+					? monController.getMonPlayer().getMyName() + " (vous)"
+					: player.getMyName();
+
+			String score = (Integer.toString((player.getMyId() == monController.getMonPlayer().getMyId())
+					? monController.getMonPlayer().getMyScore()
+					: player.getMyScore()));
+
+			String question;
+			int nbQuestions = (player.getMyId() == monController.getMonPlayer().getMyId())
+					? monController.getMonPlayer().getNbQuestion()
+					: player.getNbQuestion();
+			int totalQuestions = monController.getLaGame().getNbQuestion();
+
+			if (nbQuestions > totalQuestions) {
+				question = "Fini";
+			} else if (nbQuestions == -1) {
+				question = "Déconneccté";
+			} else {
+				question = nbQuestions + "/" + totalQuestions;
+			}
+
+			datas[i] = (displayNbQuestion) ? new String[] { name, score, question } : new String[] { name };
 		}
 
-		table = new JTable(new TableModelPlayer(datas));
+		table = new JTable(new TableModelPlayer(datas, true));
 
 		table.getTableHeader().setReorderingAllowed(false);
+
+		CentreRenderer centerRenderer = new CentreRenderer();
+		table.setDefaultRenderer(Object.class, centerRenderer);
 
 		setViewportView(table);
 		// new JScrollPane(table);
@@ -44,9 +68,14 @@ public class TablePlayer extends JScrollPane {
 
 		private Object[][] datas;
 
-		private String[] s = { "Nom du joueur", "Score" };
+		private String[] s;
 
-		public TableModelPlayer(String[][] data) {
+		public TableModelPlayer(String[][] data, boolean displayNbQuestion) {
+			if (displayNbQuestion) {
+				s = new String[] { "Joueur", "Score", "Avancement" };
+			} else {
+				s = new String[] { "Joueur" };
+			}
 			this.datas = data;
 		}
 
@@ -98,4 +127,16 @@ public class TablePlayer extends JScrollPane {
 		}
 	}
 
+	private class CentreRenderer extends DefaultTableCellRenderer {
+
+		public CentreRenderer() {
+			setHorizontalAlignment(SwingConstants.CENTER);
+		}
+
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+				int row, int column) {
+			super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			return this;
+		}
+	}
 }
