@@ -21,23 +21,25 @@ public class PnlResultAnswer extends JPanel {
 	public PnlResultAnswer(Controller unController) {
 		monController = unController;
 
-		monController.getLaConsole().setBackground("img/link 2.png");
+		monController.getLaConsole().setBackground("img/PnlResultAnswer/back.png");
 
 		setOpaque(false);
 
 		this.setBounds(ConsoleGUI.rectangle);
 		this.setLayout(null);
 
-		JButton btnNextQuestion = new JButton();
-		btnNextQuestion.setBounds(264, 200, 150, 30);
-		btnNextQuestion.setFont(new Font("Tahoma", Font.PLAIN, 13));		
-		if (monController.getMonPlayer().getNbQuestion() <= monController.getLaGame().getNbQuestion()) {
+		ButtonDisplay btnNextQuestion;
+
+		if (monController.getMonPlayer().getNbQuestion() + 1 <= monController.getLaGame().getNbQuestion()) {
 			// Question suivante
-			btnNextQuestion.setText("Question suivante");
+			btnNextQuestion = new ButtonDisplay(150, 220, 500, 50, "img/PnlResultAnswer/question_suivante_eteint.png",
+					"img/PnlResultAnswer/question_suivante_allume.png");
 		} else {
 			// Fin du Quiz
-			btnNextQuestion.setText("Résultat");
-		}			
+			btnNextQuestion = new ButtonDisplay(150, 220, 500, 50, "img/PnlResultAnswer/resultats_eteint.png",
+					"img/PnlResultAnswer/resultats_allume.png");
+
+		}
 		this.add(btnNextQuestion);
 
 		btnNextQuestion.addActionListener(new ActionListener() {
@@ -47,12 +49,12 @@ public class PnlResultAnswer extends JPanel {
 		});
 
 		lblAnswer = new JLabel("", JLabel.CENTER);
-		lblAnswer.setBounds(10, 100, 658, 20);
-		lblAnswer.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblAnswer.setBounds(40, 100, 700, 50);
+		lblAnswer.setFont(new Font("Corbel", Font.PLAIN, 20));
 		this.add(lblAnswer);
-		
-		if (monController.getLaConsole().isMulti()) {
-			tablePlayer = new TablePlayer(monController, 139, 290, 400, 150, true);
+
+		if (monController.isMulti()) {
+			tablePlayer = new TablePlayer(monController, 60, 300, 630, 200, true);
 			this.add(tablePlayer);
 		}
 
@@ -73,7 +75,5 @@ public class PnlResultAnswer extends JPanel {
 	public void setTablePlayer(TablePlayer tablePlayer) {
 		this.tablePlayer = tablePlayer;
 	}
-	
-	
 
 }

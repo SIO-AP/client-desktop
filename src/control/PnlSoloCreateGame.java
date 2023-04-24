@@ -30,11 +30,6 @@ public class PnlSoloCreateGame extends JPanel {
 		this.setBounds(ConsoleGUI.rectangle);
 		this.setLayout(null);
 
-//		JLabel lblTitre = new JLabel("Quiz Game");
-//		lblTitre.setFont(new Font("Tahoma", Font.PLAIN, 20));
-//		lblTitre.setBounds(278, 84, 200, 65);
-//		this.add(lblTitre);
-
 		ButtonDisplay btnLancementQuizSolo = new ButtonDisplay(700, 100, 250, 50, "img/PnlCreateGame/commencer_eteint.png", "img/PnlCreateGame/commencer_allume.png");
 		this.add(btnLancementQuizSolo);
 		btnLancementQuizSolo.addActionListener(new ActionListener() {
@@ -52,12 +47,12 @@ public class PnlSoloCreateGame extends JPanel {
 		this.add(btnSoloReturn);
 
 		JLabel lblNbQuestionSolo = new JLabel("Nombre de question :");
-		lblNbQuestionSolo.setFont(new Font("Corbel", Font.BOLD, 20));
-		lblNbQuestionSolo.setBounds(40, 222, 200, 40);
+		lblNbQuestionSolo.setFont(new Font("Corbel", Font.PLAIN, 20));
+		lblNbQuestionSolo.setBounds(300, 160, 200, 40);
 		this.add(lblNbQuestionSolo);
 
 		// Création de la liste déroulante pour le nombre de question
-		listeNbQuestion = new ListNbQuestion(monController);
+		listeNbQuestion = new ListNbQuestion(monController, 500, 150, 85, 50);
 		this.add(listeNbQuestion);
 	}
 

@@ -42,38 +42,37 @@ public class PnlDisplayQuiz extends JPanel {
 		this.setBounds(ConsoleGUI.rectangle);
 		this.setLayout(null);
 
-		// lblQuestion = new JTextArea(currentQuestion.getDescriptionQuestion());
 		lblQuestion = new JLabel("<html><p text-align: center>" + currentQuestion.getDescriptionQuestion() + "</p>",
 				JLabel.CENTER);
-		lblQuestion.setFont(new Font("Corbel", Font.PLAIN, 20));
-		lblQuestion.setBounds(10, 30, 658, 40);
+		lblQuestion.setFont(new Font("Corbel", Font.PLAIN, 25));
+		lblQuestion.setBounds(50, 30, 650, 60);
 		this.add(lblQuestion);
 
 		JRadioButton rdbtn1 = new JRadioButton("");
 		rdbtn1.setActionCommand("0");
-		rdbtn1.setBounds(60, 120, 418, 30);
-		rdbtn1.setFont(new Font("corbel", Font.PLAIN, 15));
+		rdbtn1.setBounds(60, 120, 600, 35);
+		rdbtn1.setFont(new Font("corbel", Font.PLAIN, 17));
 		rdbtn1.setOpaque(false);
 		this.add(rdbtn1);
 
 		JRadioButton rdbtn2 = new JRadioButton("");
 		rdbtn2.setActionCommand("1");
-		rdbtn2.setBounds(60, 165, 418, 30);
-		rdbtn2.setFont(new Font("corbel", Font.PLAIN, 15));
+		rdbtn2.setBounds(60, 165, 600, 35);
+		rdbtn2.setFont(new Font("corbel", Font.PLAIN, 17));
 		rdbtn2.setOpaque(false);
 		this.add(rdbtn2);
 
 		JRadioButton rdbtn3 = new JRadioButton("");
 		rdbtn3.setActionCommand("2");
-		rdbtn3.setBounds(60, 210, 418, 30);
-		rdbtn3.setFont(new Font("Corbel", Font.PLAIN, 15));
+		rdbtn3.setBounds(60, 210, 600, 35);
+		rdbtn3.setFont(new Font("Corbel", Font.PLAIN, 17));
 		rdbtn3.setOpaque(false);
 		this.add(rdbtn3);
 
 		JRadioButton rdbtn4 = new JRadioButton("");
 		rdbtn4.setActionCommand("3");
-		rdbtn4.setBounds(60, 255, 418, 30);
-		rdbtn4.setFont(new Font("Corbel", Font.PLAIN, 15));
+		rdbtn4.setBounds(60, 255, 600, 35);
+		rdbtn4.setFont(new Font("Corbel", Font.PLAIN, 17));
 		rdbtn4.setOpaque(false);
 		this.add(rdbtn4);
 
@@ -83,13 +82,14 @@ public class PnlDisplayQuiz extends JPanel {
 		rdbtn5.setVisible(false);
 		rdbtn5.setSelected(true);
 		this.add(rdbtn5);
+		
 		bgAnswer.add(rdbtn1);
 		bgAnswer.add(rdbtn2);
 		bgAnswer.add(rdbtn3);
 		bgAnswer.add(rdbtn4);
 		bgAnswer.add(rdbtn5);
 
-		ButtonDisplay btnValider = new ButtonDisplay(700, 500, 250, 50, "img/PnlDisplayQuiz/valider_eteint.png",
+		ButtonDisplay btnValider = new ButtonDisplay(250, 320, 250, 50, "img/PnlDisplayQuiz/valider_eteint.png",
 				"img/PnlDisplayQuiz/valider_allume.png");
 		btnValider.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -114,27 +114,28 @@ public class PnlDisplayQuiz extends JPanel {
 		// Sélectionne le dernier bouton radio
 		allButtons.nextElement().setSelected(true);
 
-		if (monController.getLaConsole().isMulti()) {
-			tablePlayer = new TablePlayer(monController, 257, 330, 400, 100, true);
+		if (monController.isMulti()) {
+			tablePlayer = new TablePlayer(monController, 60, 380, 630, 200, true);
 			this.add(tablePlayer);
+
+		} else {
+			JPanel pnlInformationDisplayQuiz = new JPanel();
+			pnlInformationDisplayQuiz.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+			pnlInformationDisplayQuiz.setBounds(40, 420, 180, 63);
+			this.add(pnlInformationDisplayQuiz);
+			pnlInformationDisplayQuiz.setLayout(null);
+
+			lblScore = new JLabel("Score : " + String.valueOf(monController.getMonPlayer().getMyScore()));
+			lblScore.setBounds(10, 13, 66, 16);
+			lblScore.setFont(new Font("Corbel", Font.PLAIN, 13));
+			pnlInformationDisplayQuiz.add(lblScore);
+
+			lblNumQuestion = new JLabel("Question " + String.valueOf(monController.getMonPlayer().getNbQuestion())
+					+ " sur " + String.valueOf(monController.getLaGame().getNbQuestion()));
+			lblNumQuestion.setBounds(10, 36, 136, 16);
+			lblNumQuestion.setFont(new Font("Corbel", Font.PLAIN, 13));
+			pnlInformationDisplayQuiz.add(lblNumQuestion);
 		}
-
-		JPanel pnlInformationDisplayQuiz = new JPanel();
-		pnlInformationDisplayQuiz.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		pnlInformationDisplayQuiz.setBounds(37, 351, 178, 57);
-		this.add(pnlInformationDisplayQuiz);
-		pnlInformationDisplayQuiz.setLayout(null);
-
-		lblScore = new JLabel("Score : " + String.valueOf(monController.getMonPlayer().getMyScore()));
-		lblScore.setBounds(10, 10, 66, 13);
-		lblScore.setFont(new Font("Corbel", Font.PLAIN, 13));
-		pnlInformationDisplayQuiz.add(lblScore);
-
-		lblNumQuestion = new JLabel("Question " + String.valueOf(monController.getMonPlayer().getNbQuestion()) + " sur "
-				+ String.valueOf(monController.getLaGame().getNbQuestion()));
-		lblNumQuestion.setBounds(10, 33, 136, 14);
-		lblNumQuestion.setFont(new Font("Corbel", Font.PLAIN, 13));
-		pnlInformationDisplayQuiz.add(lblNumQuestion);
 
 	}
 
@@ -143,7 +144,7 @@ public class PnlDisplayQuiz extends JPanel {
 		if (bgSelected == 4) {
 			lblErrorDisplayQuiz.setVisible(true);
 		} else {
-			monController.getLaConsole().questionTreatment(bgSelected);
+			monController.questionTreatment(bgSelected);
 		}
 	}
 

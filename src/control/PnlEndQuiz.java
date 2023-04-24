@@ -21,7 +21,7 @@ public class PnlEndQuiz extends JPanel {
 	public PnlEndQuiz(Controller unController) {
 		monController = unController;
 
-		monController.getLaConsole().setBackground("img/link 2.png");
+		monController.getLaConsole().setBackground("img/PnlEndQuiz/back.png");
 
 		setOpaque(false);
 
@@ -29,28 +29,29 @@ public class PnlEndQuiz extends JPanel {
 		this.setLayout(null);
 
 		JLabel lblEndQuiz = new JLabel("Fin du Quiz");
-		lblEndQuiz.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblEndQuiz.setFont(new Font("Corbel", Font.BOLD, 20));
 		lblEndQuiz.setHorizontalAlignment(SwingConstants.CENTER);
-		lblEndQuiz.setBounds(10, 59, 658, 26);
+		lblEndQuiz.setBounds(545, 100, 520, 30);
 		this.add(lblEndQuiz);
 
 		lblFinalScore = new JLabel(
 				"Votre score final est de " + String.valueOf(monController.getMonPlayer().getMyScore()) + " point(s).");
 		lblFinalScore.setHorizontalAlignment(SwingConstants.CENTER);
-		lblFinalScore.setBounds(10, 163, 658, 32);
+		lblFinalScore.setFont(new Font("Corbel", Font.PLAIN, 20));
+		lblFinalScore.setBounds(545, 160, 520, 30);
 		this.add(lblFinalScore);
 
-		JButton btnMultiReturn = new JButton("Menu");
+		ButtonDisplay btnMultiReturn = new ButtonDisplay(700, 500, 250, 50, "img/PnlEndQuiz/menu_eteint.png",
+				"img/PnlEndQuiz/menu_allume.png");
 		btnMultiReturn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				monController.NextPanel(monController.getLaConsole().getPnlEndQuiz());
 			}
 		});
-		btnMultiReturn.setBounds(267, 376, 103, 35);
 		this.add(btnMultiReturn);
 
-		if (monController.getLaConsole().isMulti()) {
-			tablePlayer = new TablePlayer(monController, 10, 90, 658, 246, true);
+		if (monController.isMulti()) {
+			tablePlayer = new TablePlayer(monController, 545, 260, 520, 200, true);
 			this.add(tablePlayer);
 		}
 

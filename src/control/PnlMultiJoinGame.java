@@ -85,7 +85,7 @@ public class PnlMultiJoinGame extends JPanel {
 		btnJoinGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (!lblIdGame2.getText().equals("")) {
-					monController.getLaConsole().setCreateGameMulti(false);
+					monController.setCreateGameMulti(false);
 					monController.getLeClient().joinGame(Integer.parseInt(lblIdGame2.getText()));
 				}
 			}
