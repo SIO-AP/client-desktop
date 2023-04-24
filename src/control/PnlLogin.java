@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -51,9 +52,10 @@ public class PnlLogin extends JPanel {
 		this.add(passwordField);
 		passwordField.setColumns(10);
 
-		ButtonDisplay btnLogin = new ButtonDisplay(50, 450, 250, 50, "img/PnlLogin/connexion_eteint.png", "img/PnlLogin/connexion_allume.png");
+		ButtonDisplay btnLogin = new ButtonDisplay(50, 450, 250, 50, "img/PnlLogin/connexion_eteint.png",
+				"img/PnlLogin/connexion_allume.png");
 		this.add(btnLogin);
-		
+
 		lblConnectionFasle = new JLabel("Nom ou Mot de passe incorecte !");
 		lblConnectionFasle.setForeground(Color.RED);
 		lblConnectionFasle.setHorizontalAlignment(SwingConstants.CENTER);
@@ -61,7 +63,12 @@ public class PnlLogin extends JPanel {
 		lblConnectionFasle.setBounds(10, 260, 658, 19);
 		this.add(lblConnectionFasle);
 
-		ButtonDisplay btnCancel = new ButtonDisplay(50, 530, 250, 50, "img/PnlLogin/quitter_eteint.png", "img/PnlLogin/quitter_allume.png");
+		JPanel panel = new JPanel();
+		panel.setBounds(409, 144, 427, 243);
+		// add(panel);
+
+		ButtonDisplay btnCancel = new ButtonDisplay(50, 530, 250, 50, "img/PnlLogin/quitter_eteint.png",
+				"img/PnlLogin/quitter_allume.png");
 		this.add(btnCancel);
 
 		// Lance la vérification du mot de passe lors du clique sur le bouton de
@@ -99,11 +106,14 @@ public class PnlLogin extends JPanel {
 	private void login() {
 		try {
 			if (monController.verification(txtName.getText(), String.valueOf(passwordField.getPassword()))) {
+				// Changement de Panel
 				monController.NextPanel(monController.getLaConsole().getPnlLogin());
 			} else {
-				lblConnectionFasle.setVisible(true);
+				monController.getLaConsole().setBackground("img/PnlLogin/erreur_login.png");
+				monController.getLaConsole().remove(monController.getLaConsole().getPnlLogin());
+				monController.getLaConsole().add(monController.getLaConsole().getPnlLogin());
 				passwordField.setText("");
-				// passwordField.focus
+				passwordField.requestFocus();
 			}
 		} catch (Exception e1) {
 			e1.printStackTrace();

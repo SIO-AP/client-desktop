@@ -24,25 +24,23 @@ public class PnlWaitingRoom extends JPanel {
 	public PnlWaitingRoom(Controller unController) {
 		monController = unController;
 
-		monController.getLaConsole().setBackground("img/link 2.png");
+		monController.getLaConsole().setBackground("img/PnlWaitingRoom/back.png");
 
 		setOpaque(false);
 
 		this.setBounds(ConsoleGUI.rectangle);
 		this.setLayout(null);
 
-		if (monController.getLaConsole().isCreateGameMulti()) {
-			JButton btnStart = new JButton("Commencer");
+		if (monController.isCreateGameMulti()) {
+			ButtonDisplay btnStart = new ButtonDisplay(215, 360, 250, 50, "img/PnlWaitingRoom/commencer_eteint.png", "img/PnlWaitingRoom/commencer_allume.png");
 			btnStart.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					monController.NextPanel(monController.getLaConsole().getPnlWaitingRoom());
 				}
 			});
-			btnStart.setBounds(254, 357, 201, 46);
 			this.add(btnStart);
 		}
 
-//		jp.setBounds(10, 47, 658, 246);
 		tablePlayer = new TablePlayer(monController, 10, 47, 658, 246, false);
 		this.add(tablePlayer);
 	}

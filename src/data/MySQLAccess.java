@@ -42,7 +42,7 @@ public class MySQLAccess {
 
 		// Charge le driver
 		try {
-			Class.forName(properties.getProperty("jdbc.driver.class"));
+			Class.forName(monController.getTheDecrypter().decrypt(properties.getProperty("jdbc.driver.class")));
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -90,6 +90,7 @@ public class MySQLAccess {
 					answers.add(new Answer(codeAnswer, descAnswer, resAnswer));
 				}
 
+				// mélange la liste des réponses
 				Collections.shuffle(answers);
 
 				questions.add(new Question(idQuestion, nomQuestion, answers));
@@ -101,10 +102,14 @@ public class MySQLAccess {
 	}
 
 	public int verifLogin(String name, String password) {
+		String query = "select * from player where name_player = ?";
 		try (Connection connection = DriverManager.getConnection(urlCnx, loginCnx, passwordCnx);
-				Statement st = connection.createStatement()) {
+				PreparedStatement ps = connection.prepareStatement(query)) {
 
-			ResultSet resultSet = st.executeQuery("select * from player where name_player = '" + name + "'");
+			ps.setString(1, name);
+
+			ps.execute();
+			ResultSet resultSet = ps.getResultSet();
 			if (resultSet.next()) {
 				String password_db = resultSet.getString("password_player");
 
@@ -121,22 +126,17 @@ public class MySQLAccess {
 		}
 	}
 
-	
-	
-	
-	
 	public Game createSoloPlayerGame(Game game) {
-		String query = "INSERT INTO h5ws00fg4ypyuohr.GAME VALUES (DEFAULT, ?, ?, ?, ?)";
+		String query = "INSERT INTO h5ws00fg4ypyuohr.GAME VALUES (DEFAULT, ?, ?, ?, TIME(NOW()))";
 		try (Connection connection = DriverManager.getConnection(urlCnx, loginCnx, passwordCnx);
 				PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);) {
 
 			ps.setString(1, game.getName());
 			ps.setInt(2, game.getIdLeader());
 			ps.setInt(3, 1);
-			ps.setString(4, "00:00:00");
 
 			ps.execute();
- 
+
 			ResultSet rs = ps.getGeneratedKeys();
 			int generatedKey = 0;
 			if (rs.next()) {
@@ -151,8 +151,7 @@ public class MySQLAccess {
 			return game;
 		}
 	}
-	
-	
+
 	public void finishedSoloPlayerGame(Game game) {
 		String queryGame = "UPDATE h5ws00fg4ypyuohr.GAME SET progress_game = 3 WHERE (id_game = ?)";
 

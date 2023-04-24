@@ -47,7 +47,7 @@ public class PnlGameMode extends JPanel {
 				"img/PnlGameMode/solo_allume.png");
 		btnSoloPlayer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				monController.getLaConsole().setMulti(false);
+				monController.setMulti(false);
 				monController.NextPanel(monController.getLaConsole().getPnlGameMode());
 			}
 		});
@@ -57,7 +57,7 @@ public class PnlGameMode extends JPanel {
 				"img/PnlGameMode/multijoueur_allume.png");
 		btnMultiPlayer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				monController.getLaConsole().setMulti(true);
+				monController.setMulti(true);
 				monController.NextPanel(monController.getLaConsole().getPnlGameMode());
 			}
 		});

@@ -38,51 +38,29 @@ public class PnlMultiCreateGame extends JPanel {
 		this.setBounds(ConsoleGUI.rectangle);
 		this.setLayout(null);
 
+		JLabel lblNameParty = new JLabel("Nom de la partie :", JLabel.RIGHT);
+		lblNameParty.setFont(new Font("Corbel", Font.PLAIN, 20));
+		lblNameParty.setBounds(130, 95, 200, 40);
+		this.add(lblNameParty);
+
 		txtNameParty = new JTextField();
-		txtNameParty.setBounds(204, 157, 287, 48);
+		txtNameParty.setBounds(355, 85, 230, 50);
 		txtNameParty.setColumns(10);
 		this.add(txtNameParty);
 
-		JLabel lblNameParty = new JLabel("Nom de la partie :");
-		lblNameParty.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblNameParty.setBounds(41, 162, 190, 32);
-		this.add(lblNameParty);
-
-		JLabel lblNbQuestionMulti = new JLabel("Nombre de questions :");
-		lblNbQuestionMulti.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblNbQuestionMulti.setBounds(40, 222, 190, 32);
+		JLabel lblNbQuestionMulti = new JLabel("Nombre de question :", JLabel.RIGHT);
+		lblNbQuestionMulti.setFont(new Font("Corbel", Font.PLAIN, 20));
+		lblNbQuestionMulti.setBounds(130, 160, 200, 40);
 		this.add(lblNbQuestionMulti);
 
-		JLabel lblTimeStart = new JLabel("Début de la partie :");
-		lblTimeStart.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblTimeStart.setBounds(41, 282, 190, 32);
-		this.add(lblTimeStart);
-
-		JButton btnLancementQuizMulti = new JButton("Commencer");
-		btnLancementQuizMulti.setBounds(501, 214, 170, 48);
-		this.add(btnLancementQuizMulti);
-		btnLancementQuizMulti.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				int nbQuestion = (int) listeNbQuestion.getSelectedItem();
-				monController.setLaGame(new Game(txtNameParty.getText(), monController.getMonPlayer().getMyId(),
-						nbQuestion, monController.getMonPlayer(), getHeure()));
-				monController.getLaConsole().setCreateGameMulti(true);
-				monController.getLeClient().createGame();
-			}
-		});
-
-		JButton btnMultiReturn = new JButton("Annuler");
-		btnMultiReturn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				monController.PreviousPanel(monController.getLaConsole().getPnlMultiCreateGame());
-			}
-		});
-		btnMultiReturn.setBounds(267, 376, 103, 35);
-		this.add(btnMultiReturn);
-
 		// Création de la liste déroulante pour le nombre de question
-		listeNbQuestion = new ListNbQuestion(monController);
+		listeNbQuestion = new ListNbQuestion(monController, 355, 150, 85, 50);
 		this.add(listeNbQuestion);
+
+		JLabel lblTimeStart = new JLabel("Début de la partie :", JLabel.RIGHT);
+		lblTimeStart.setFont(new Font("Corbel", Font.PLAIN, 20));
+		lblTimeStart.setBounds(130, 225, 200, 40);
+		this.add(lblTimeStart);
 
 		model = new SpinnerDateModel();
 		spinnerTimeStart = new JSpinner(model);
@@ -92,15 +70,36 @@ public class PnlMultiCreateGame extends JPanel {
 		editor.getTextField().setEditable(false); // permettre la saisie manuelle
 		spinnerTimeStart.setEditor(editor);
 		spinnerTimeStart.setPreferredSize(new Dimension(150, 48));
-		Font font = spinnerTimeStart.getFont();
-		spinnerTimeStart.setFont(new Font(font.getName(), font.getStyle(), 15)); // taille de police de 20 points
-		spinnerTimeStart.setBounds(204, 272, 153, 48);
+		//Font font = spinnerTimeStart.getFont();
+		spinnerTimeStart.setFont(new Font("Cordel", Font.PLAIN, 15));
+		spinnerTimeStart.setBounds(355, 215, 153, 48);
 
 		// Centrage de l'heure dans le spinner
 		JSpinner.DefaultEditor spinnerEditor = (JSpinner.DefaultEditor) spinnerTimeStart.getEditor();
 		spinnerEditor.getTextField().setHorizontalAlignment(SwingConstants.CENTER);
-
 		this.add(spinnerTimeStart);
+
+		ButtonDisplay btnLancementQuizMulti = new ButtonDisplay(700, 100, 250, 50,
+				"img/PnlCreateGame/commencer_eteint.png", "img/PnlCreateGame/commencer_allume.png");
+		this.add(btnLancementQuizMulti);
+		btnLancementQuizMulti.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int nbQuestion = (int) listeNbQuestion.getSelectedItem();
+				monController.setLaGame(new Game(txtNameParty.getText(), monController.getMonPlayer().getMyId(),
+						nbQuestion, monController.getMonPlayer(), getHeure()));
+				monController.setCreateGameMulti(true);
+				monController.getLeClient().createGame();
+			}
+		});
+
+		ButtonDisplay btnMultiReturn = new ButtonDisplay(700, 200, 250, 50, "img/PnlCreateGame/retour_eteint.png",
+				"img/PnlCreateGame/retour_allume.png");
+		btnMultiReturn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				monController.PreviousPanel(monController.getLaConsole().getPnlMultiCreateGame());
+			}
+		});
+		this.add(btnMultiReturn);
 
 	}
 
