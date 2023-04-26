@@ -1,0 +1,5 @@
+IDE : Java Eclispe
+UML : PowerDesigner
+Serveur : Virtual Private Server IONOS SE Ubuntu
+BDD : MySQL Workbench
+Versionning / CoWorking : GitHub
