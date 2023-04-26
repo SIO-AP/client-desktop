@@ -1,7 +1,9 @@
 package data;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import javax.swing.JOptionPane;
 
@@ -41,8 +43,16 @@ public class ClientWebsocket {
 
 		client.start();
 
-	//	client.connect(5000, "217.160.55.77", 54556);
-		client.connect(5000, "127.0.0.1", 54556);
+		// Charge le fichier de propriété contenant les informations d'accès à la BDD
+		Properties properties = new Properties();
+		try (InputStream fis = getClass().getClassLoader().getResourceAsStream("data/conf.properties")) {
+			properties.load(fis);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		client.connect(500000, monController.getTheDecrypter().decrypt(properties.getProperty("websocket.ip")),
+				Integer.parseInt(monController.getTheDecrypter().decrypt(properties.getProperty("websocket.port"))));
 
 		client.addListener(new Listener() {
 
