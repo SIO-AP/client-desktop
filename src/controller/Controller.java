@@ -257,7 +257,7 @@ public class Controller {
 					laConsole.setPnlMultiGameMode(new PnlMultiGameMode(this));
 					laConsole.getContentPane().add(laConsole.getPnlMultiGameMode());
 				} catch (IOException e) {
-					 e.printStackTrace();
+					// e.printStackTrace();
 					laConsole.setPnlGameMode(new PnlGameMode(this));
 					laConsole.getContentPane().add(laConsole.getPnlGameMode());
 					
